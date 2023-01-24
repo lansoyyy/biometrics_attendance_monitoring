@@ -15,7 +15,7 @@ class TextRegular extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      maxLines: 2,
+      maxLines: 3,
       style:
           TextStyle(fontSize: fontSize, color: color, fontFamily: 'QRegular'),
     );

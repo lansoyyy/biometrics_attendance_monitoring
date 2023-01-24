@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/logo.jpg',
+                        'assets/images/logo.png',
                         height: 120,
                       ),
                       const SizedBox(
@@ -37,11 +37,14 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TextRegular(
-                              text: 'University of Example',
-                              fontSize: 14,
-                              color: Colors.white),
-                          TextRegular(
+                          SizedBox(
+                            width: 150,
+                            child: TextRegular(
+                                text: 'Carlos Hilado Memorial State University',
+                                fontSize: 14,
+                                color: Colors.white),
+                          ),
+                          TextBold(
                               text: 'Attendance checker',
                               fontSize: 24,
                               color: Colors.white)

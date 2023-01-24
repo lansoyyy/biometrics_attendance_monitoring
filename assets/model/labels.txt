@@ -1,0 +1,19 @@
+0 Banana
+1 Bell Pepper
+2 Cabbage
+3 Carrot
+4 Chilli Pepper
+5 Corn
+6 Cucumber
+7 Eggplant
+8 Garlic
+9 Ginger
+10 Lettuce
+11 Onion
+12 Peas
+13 Potato
+14 Raddish
+15 Spinach
+16 Sweet Potato
+17 Tomato
+18 Watermelon

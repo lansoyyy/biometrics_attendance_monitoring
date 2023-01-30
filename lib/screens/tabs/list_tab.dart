@@ -40,7 +40,7 @@ class ListTab extends StatelessWidget {
                     ),
                     DataCell(
                       TextRegular(
-                          text: 'Sports Day',
+                          text: 'Sports Day - Time In',
                           fontSize: 12,
                           color: Colors.black),
                     ),

@@ -33,6 +33,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
     '2027',
   ];
 
+  bool _timeIn = false;
+  bool _timeOut = false;
+
   var _value = 0;
   var _value1 = 0;
 
@@ -220,6 +223,36 @@ class _AttendanceTabState extends State<AttendanceTab> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CheckboxListTile(
+              tileColor: Colors.white,
+              title: TextRegular(
+                  text: 'Time In', fontSize: 12, color: Colors.black),
+              value: _timeIn,
+              onChanged: (value) {
+                setState(() {
+                  _timeIn = value!;
+                  if (value) _timeOut = false;
+                });
+              },
+            ),
+            CheckboxListTile(
+              tileColor: Colors.white,
+              title: TextRegular(
+                  text: 'Time Out', fontSize: 12, color: Colors.black),
+              value: _timeOut,
+              onChanged: (value) {
+                setState(() {
+                  _timeOut = value!;
+                  if (value) _timeIn = false;
+                });
+              },
+            ),
+            const SizedBox(
+              height: 10,
             ),
             Container(
                 color: Colors.white,

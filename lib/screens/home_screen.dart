@@ -84,12 +84,12 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const Expanded(
+            Expanded(
               child: SizedBox(
                 child: TabBarView(children: [
-                  RegisterTab(),
+                  const RegisterTab(),
                   AttendanceTab(),
-                  ListTab(),
+                  const ListTab(),
                 ]),
               ),
             ),

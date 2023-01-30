@@ -23,6 +23,7 @@ class LandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        color: primary,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -204,7 +205,6 @@ class LandingScreen extends StatelessWidget {
             ],
           ),
         ),
-        color: primary,
       ),
     );
   }
@@ -221,7 +221,7 @@ class LandingScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextBold(text: 'LOGIN', fontSize: 18, color: Colors.white),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
@@ -230,7 +230,7 @@ class LandingScreen extends StatelessWidget {
                   onChanged: ((value) {
                     id = value;
                   }),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -245,7 +245,7 @@ class LandingScreen extends StatelessWidget {
                           color: Colors.white, fontFamily: 'QRegular')),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
@@ -255,7 +255,7 @@ class LandingScreen extends StatelessWidget {
                   onChanged: ((value) {
                     password = value;
                   }),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -270,7 +270,7 @@ class LandingScreen extends StatelessWidget {
                           color: Colors.white, fontFamily: 'QRegular')),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
               Center(
@@ -316,7 +316,7 @@ class LandingScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextBold(text: 'SIGN UP', fontSize: 18, color: Colors.white),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
@@ -325,7 +325,7 @@ class LandingScreen extends StatelessWidget {
                   onChanged: ((value) {
                     newId = value;
                   }),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -340,7 +340,7 @@ class LandingScreen extends StatelessWidget {
                           color: Colors.white, fontFamily: 'QRegular')),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
@@ -350,7 +350,7 @@ class LandingScreen extends StatelessWidget {
                   onChanged: ((value) {
                     newPassword = value;
                   }),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -365,7 +365,7 @@ class LandingScreen extends StatelessWidget {
                           color: Colors.white, fontFamily: 'QRegular')),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
@@ -375,7 +375,7 @@ class LandingScreen extends StatelessWidget {
                   onChanged: ((value) {
                     confirmPassword = value;
                   }),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -390,7 +390,7 @@ class LandingScreen extends StatelessWidget {
                           color: Colors.white, fontFamily: 'QRegular')),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
               Center(

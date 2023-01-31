@@ -42,9 +42,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
   var _value = 0;
   var _value1 = 0;
 
-  String month = '';
+  String month = '01';
   String day = '';
-  String year = '';
+  String year = '2023';
   String name = '';
   String nameOfEvent = '';
 

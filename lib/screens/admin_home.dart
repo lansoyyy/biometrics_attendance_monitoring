@@ -1,6 +1,9 @@
+import 'package:biometrics_attendance/screens/landing_screen.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   @override
@@ -20,39 +23,96 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               width: double.infinity,
               height: 200,
               color: primary,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/logo.png',
-                        height: 120,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 150,
-                            child: TextRegular(
-                                text: 'Carlos Hilado Memorial State University',
-                                fontSize: 14,
-                                color: Colors.white),
-                          ),
-                          TextBold(
-                              text: 'Attendance checker',
-                              fontSize: 24,
-                              color: Colors.white)
-                        ],
-                      ),
-                    ],
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10, top: 20),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: const Text(
+                                        'Logout Confirmation',
+                                        style: TextStyle(
+                                            fontFamily: 'QBold',
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: const Text(
+                                        'Are you sure you want to Logout?',
+                                        style:
+                                            TextStyle(fontFamily: 'QRegular'),
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: const Text(
+                                            'Close',
+                                            style: TextStyle(
+                                                fontFamily: 'QRegular',
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        FlatButton(
+                                          onPressed: () {
+                                            Fluttertoast.showToast(
+                                                msg: 'Admin logged out!');
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            LandingScreen()));
+                                          },
+                                          child: const Text(
+                                            'Continue',
+                                            style: TextStyle(
+                                                fontFamily: 'QRegular',
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
+                                    ));
+                          },
+                          icon: const Icon(Icons.logout, color: Colors.white)),
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/logo.png',
+                          height: 120,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: TextRegular(
+                                  text:
+                                      'Carlos Hilado Memorial State University',
+                                  fontSize: 14,
+                                  color: Colors.white),
+                            ),
+                            TextBold(
+                                text: 'Attendance checker',
+                                fontSize: 24,
+                                color: Colors.white)
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -100,9 +160,30 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             fontSize: 18,
                             color: Colors.white),
                       ),
-                      StreamBuilder<Object>(
-                          stream: null,
-                          builder: (context, snapshot) {
+                      StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('Attendance')
+                              .orderBy('dateTime', descending: true)
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              print('error');
+                              return const Center(child: Text('Error'));
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              print('waiting');
+                              return const Padding(
+                                padding: EdgeInsets.only(top: 50),
+                                child: Center(
+                                    child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                )),
+                              );
+                            }
+
+                            final data = snapshot.requireData;
                             return Padding(
                               padding:
                                   const EdgeInsets.fromLTRB(10, 10, 10, 20),
@@ -133,7 +214,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                 color: Colors.black)),
                                       ],
                                       rows: [
-                                        for (int i = 0; i < 50; i++)
+                                        for (int i = 0;
+                                            i < data.docs.length;
+                                            i++)
                                           DataRow(
                                               color: MaterialStateProperty
                                                   .resolveWith<Color?>(
@@ -147,20 +230,22 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                               cells: [
                                                 DataCell(
                                                   TextRegular(
-                                                      text: 'John Doe',
+                                                      text: data.docs[i]
+                                                          ['name'],
                                                       fontSize: 12,
                                                       color: Colors.black),
                                                 ),
                                                 DataCell(
                                                   TextRegular(
                                                       text:
-                                                          'Sports Day - Time In',
+                                                          '${data.docs[i]['nameOfEvent']} - ${data.docs[i]['type']}',
                                                       fontSize: 12,
                                                       color: Colors.black),
                                                 ),
                                                 DataCell(
                                                   TextRegular(
-                                                      text: '01/20/23',
+                                                      text: data.docs[i]
+                                                          ['date'],
                                                       fontSize: 12,
                                                       color: Colors.black),
                                                 )

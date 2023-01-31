@@ -1,11 +1,14 @@
 import 'package:biometrics_attendance/widgets/text_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ListTab extends StatelessWidget {
-  const ListTab({Key? key}) : super(key: key);
+  final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
+    print(box.read('password'));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -16,9 +19,32 @@ class ListTab extends StatelessWidget {
               fontSize: 18,
               color: Colors.white),
         ),
-        StreamBuilder<Object>(
-            stream: null,
-            builder: (context, snapshot) {
+        StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Attendance')
+                .where('id', isEqualTo: box.read('id'))
+                .where('password', isEqualTo: box.read('password'))
+                .orderBy('dateTime', descending: true)
+                .snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                print('error');
+                return const Center(child: Text('Error'));
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                print('waiting');
+                return const Padding(
+                  padding: EdgeInsets.only(top: 50),
+                  child: Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.black,
+                  )),
+                );
+              }
+
+              final data = snapshot.requireData;
+              print(data.docs.length);
               return Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
                 child: Container(
@@ -48,7 +74,7 @@ class ListTab extends StatelessWidget {
                                   color: Colors.black)),
                         ],
                         rows: [
-                          for (int i = 0; i < 50; i++)
+                          for (int i = 0; i < data.docs.length; i++)
                             DataRow(
                                 color:
                                     MaterialStateProperty.resolveWith<Color?>(
@@ -61,19 +87,20 @@ class ListTab extends StatelessWidget {
                                 cells: [
                                   DataCell(
                                     TextRegular(
-                                        text: 'John Doe',
+                                        text: data.docs[i]['name'],
                                         fontSize: 12,
                                         color: Colors.black),
                                   ),
                                   DataCell(
                                     TextRegular(
-                                        text: 'Sports Day - Time In',
+                                        text:
+                                            '${data.docs[i]['nameOfEvent']} - ${data.docs[i]['type']}',
                                         fontSize: 12,
                                         color: Colors.black),
                                   ),
                                   DataCell(
                                     TextRegular(
-                                        text: '01/20/23',
+                                        text: data.docs[i]['date'],
                                         fontSize: 12,
                                         color: Colors.black),
                                   )

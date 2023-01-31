@@ -26,41 +26,59 @@ class ListTab extends StatelessWidget {
                   width: double.infinity,
                   color: Colors.white,
                   child: SingleChildScrollView(
-                    child: DataTable(columns: [
-                      DataColumn(
-                          label: TextBold(
-                              text: 'Name', fontSize: 14, color: Colors.black)),
-                      DataColumn(
-                          label: TextBold(
-                              text: 'Event',
-                              fontSize: 14,
-                              color: Colors.black)),
-                      DataColumn(
-                          label: TextBold(
-                              text: 'Date', fontSize: 14, color: Colors.black)),
-                    ], rows: [
-                      for (int i = 0; i < 50; i++)
-                        DataRow(cells: [
-                          DataCell(
-                            TextRegular(
-                                text: 'John Doe',
-                                fontSize: 12,
-                                color: Colors.black),
-                          ),
-                          DataCell(
-                            TextRegular(
-                                text: 'Sports Day - Time In',
-                                fontSize: 12,
-                                color: Colors.black),
-                          ),
-                          DataCell(
-                            TextRegular(
-                                text: '01/20/23',
-                                fontSize: 12,
-                                color: Colors.black),
-                          )
+                    child: DataTable(
+                        border: TableBorder.all(
+                          color: Colors.grey,
+                        ),
+                        columns: [
+                          DataColumn(
+                              label: TextBold(
+                                  text: 'Name',
+                                  fontSize: 14,
+                                  color: Colors.black)),
+                          DataColumn(
+                              label: TextBold(
+                                  text: 'Event',
+                                  fontSize: 14,
+                                  color: Colors.black)),
+                          DataColumn(
+                              label: TextBold(
+                                  text: 'Date',
+                                  fontSize: 14,
+                                  color: Colors.black)),
+                        ],
+                        rows: [
+                          for (int i = 0; i < 50; i++)
+                            DataRow(
+                                color:
+                                    MaterialStateProperty.resolveWith<Color?>(
+                                        (Set<MaterialState> states) {
+                                  if (i.floor().isEven) {
+                                    return Colors.blueGrey[50];
+                                  }
+                                  return null; // Use the default value.
+                                }),
+                                cells: [
+                                  DataCell(
+                                    TextRegular(
+                                        text: 'John Doe',
+                                        fontSize: 12,
+                                        color: Colors.black),
+                                  ),
+                                  DataCell(
+                                    TextRegular(
+                                        text: 'Sports Day - Time In',
+                                        fontSize: 12,
+                                        color: Colors.black),
+                                  ),
+                                  DataCell(
+                                    TextRegular(
+                                        text: '01/20/23',
+                                        fontSize: 12,
+                                        color: Colors.black),
+                                  )
+                                ]),
                         ]),
-                    ]),
                   ),
                 ),
               );

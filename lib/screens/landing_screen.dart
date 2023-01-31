@@ -1,3 +1,4 @@
+import 'package:biometrics_attendance/screens/admin_home.dart';
 import 'package:biometrics_attendance/screens/home_screen.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
@@ -168,12 +169,13 @@ class LandingScreen extends StatelessWidget {
                                           color: Colors.white,
                                           onPressed: () {
                                             if (adminPassword == 'admin123') {
+                                              box.write('user', 'admin');
                                               Fluttertoast.showToast(
                                                   msg: 'Logged in as Admin!');
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          HomeScreen()));
+                                                          AdminHomeScreen()));
                                             } else {
                                               Fluttertoast.showToast(
                                                   msg:
@@ -284,6 +286,7 @@ class LandingScreen extends StatelessWidget {
                   onPressed: () {
                     if (id == box.read('id') &&
                         password == box.read('password')) {
+                      box.write('user', 'user');
                       Fluttertoast.showToast(msg: 'Login Succesfully!');
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => HomeScreen()));

@@ -1,11 +1,63 @@
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
 
 import '../../widgets/button_widget.dart';
 
-class RegisterTab extends StatelessWidget {
+class RegisterTab extends StatefulWidget {
   const RegisterTab({Key? key}) : super(key: key);
+
+  @override
+  State<RegisterTab> createState() => _RegisterTabState();
+}
+
+class _RegisterTabState extends State<RegisterTab> {
+  final LocalAuthentication auth = LocalAuthentication();
+
+  bool? _canCheckBiometrics;
+  List<BiometricType>? _availableBiometrics;
+  String _authorized = 'Not Authorized';
+  bool _isAuthenticating = false;
+
+  Future<void> _authenticateWithBiometrics() async {
+    // only Biometrics
+    bool authenticated = false;
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await auth.authenticate(
+        localizedReason:
+            'Scan your fingerprint (or face or whatever) to authenticate',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Authenticating';
+      });
+    } on PlatformException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - ${e.message}';
+      });
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    final String message = authenticated ? 'Authorized' : 'Not Authorized';
+    setState(() {
+      _authorized = message;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +168,11 @@ class RegisterTab extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    ButtonWidget(onPressed: () {}, text: 'Confirm')
+                    ButtonWidget(
+                        onPressed: () {
+                          _authenticateWithBiometrics();
+                        },
+                        text: 'Confirm')
                   ],
                 )),
           ],

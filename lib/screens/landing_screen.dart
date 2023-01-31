@@ -123,7 +123,7 @@ class LandingScreen extends StatelessWidget {
                                           text: 'Continue as Admin',
                                           fontSize: 18,
                                           color: Colors.white),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 20,
                                       ),
                                       Padding(
@@ -134,7 +134,7 @@ class LandingScreen extends StatelessWidget {
                                           onChanged: ((value) {
                                             adminPassword = value;
                                           }),
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Colors.white),
@@ -154,7 +154,7 @@ class LandingScreen extends StatelessWidget {
                                                   fontFamily: 'QRegular')),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 50,
                                       ),
                                       Center(
@@ -173,7 +173,7 @@ class LandingScreen extends StatelessWidget {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const HomeScreen()));
+                                                          HomeScreen()));
                                             } else {
                                               Fluttertoast.showToast(
                                                   msg:
@@ -286,7 +286,7 @@ class LandingScreen extends StatelessWidget {
                         password == box.read('password')) {
                       Fluttertoast.showToast(msg: 'Login Succesfully!');
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
+                          builder: (context) => HomeScreen()));
                     } else {
                       Fluttertoast.showToast(msg: 'Invalid Account! Try again');
                     }

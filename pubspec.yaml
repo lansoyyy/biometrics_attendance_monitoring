@@ -38,6 +38,7 @@ dependencies:
   get_storage:
   firebase_core:
   cloud_firestore:
+  local_auth:
 
 dev_dependencies:
   flutter_test:

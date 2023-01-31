@@ -1,6 +1,5 @@
 import 'package:biometrics_attendance/screens/tabs/attendance_tab.dart';
 import 'package:biometrics_attendance/screens/tabs/list_tab.dart';
-import 'package:biometrics_attendance/screens/tabs/register_tab.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         backgroundColor: secondary,
         body: Column(
@@ -73,9 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: 14,
                     ),
                     tabs: [
-                      Tab(
-                        text: 'Register',
-                      ),
+                      // Tab(
+                      //   text: 'Register',
+                      // ),
                       Tab(
                         text: 'Attendance',
                       ),
@@ -90,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: SizedBox(
                 child: TabBarView(children: [
-                  const RegisterTab(),
+                  // const RegisterTab(),
                   AttendanceTab(),
                   const ListTab(),
                 ]),

@@ -45,7 +45,7 @@ class _RegisterTabState extends State<RegisterTab> {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
+        _authorized = 'Error - ${e.message} asd';
       });
       return;
     }
@@ -57,6 +57,12 @@ class _RegisterTabState extends State<RegisterTab> {
     setState(() {
       _authorized = message;
     });
+
+    if (authenticated) {
+      print('true');
+    } else {
+      print('false');
+    }
   }
 
   @override
@@ -171,6 +177,7 @@ class _RegisterTabState extends State<RegisterTab> {
                     ButtonWidget(
                         onPressed: () {
                           _authenticateWithBiometrics();
+                          // _getAvailableBiometrics();
                         },
                         text: 'Confirm')
                   ],

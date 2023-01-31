@@ -1,7 +1,10 @@
+import 'package:biometrics_attendance/screens/home_screen.dart';
+import 'package:biometrics_attendance/services/add_attendance.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
 import '../../widgets/button_widget.dart';
 
 class AttendanceTab extends StatefulWidget {
@@ -39,6 +42,65 @@ class _AttendanceTabState extends State<AttendanceTab> {
   var _value = 0;
   var _value1 = 0;
 
+  String month = '';
+  String day = '';
+  String year = '';
+  String name = '';
+  String nameOfEvent = '';
+
+  final LocalAuthentication auth = LocalAuthentication();
+
+  bool? _canCheckBiometrics;
+  List<BiometricType>? _availableBiometrics;
+  String _authorized = 'Not Authorized';
+  bool _isAuthenticating = false;
+  bool authenticated = false;
+
+  Future<void> _authenticateWithBiometrics() async {
+    // only Biometrics
+
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await auth.authenticate(
+        localizedReason:
+            'Scan your fingerprint (or face or whatever) to authenticate',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Authenticating';
+      });
+    } on PlatformException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - ${e.message}';
+      });
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    final String message = authenticated ? 'Authorized' : 'Not Authorized';
+    setState(() {
+      _authorized = message;
+    });
+
+    if (authenticated) {
+      Fluttertoast.showToast(msg: 'Fingerprint scanned succesfully!');
+    } else {
+      Fluttertoast.showToast(msg: 'Fingerprint scanned unsuccesfully!');
+    }
+    print(authenticated);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -47,7 +109,8 @@ class _AttendanceTabState extends State<AttendanceTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextBold(text: 'Attendance', fontSize: 18, color: Colors.white),
+            TextBold(
+                text: 'Attendance Sheet', fontSize: 18, color: Colors.white),
             const SizedBox(
               height: 10,
             ),
@@ -59,7 +122,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
                 child: TextFormField(
                   style: const TextStyle(
                       color: Colors.black, fontFamily: 'Quicksand'),
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    name = value;
+                  },
                   decoration: const InputDecoration(
                     fillColor: Colors.white,
                     filled: true,
@@ -87,7 +152,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
                 child: TextFormField(
                   style: const TextStyle(
                       color: Colors.black, fontFamily: 'Quicksand'),
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    nameOfEvent = value;
+                  },
                   decoration: const InputDecoration(
                     fillColor: Colors.white,
                     filled: true,
@@ -131,7 +198,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
                                   items: [
                                     for (int i = 0; i < months.length; i++)
                                       DropdownMenuItem(
-                                          onTap: () {},
+                                          onTap: () {
+                                            month = (i + 1).toString();
+                                          },
                                           value: i,
                                           child: TextRegular(
                                               text: months[i],
@@ -159,10 +228,19 @@ class _AttendanceTabState extends State<AttendanceTab> {
                         child: SizedBox(
                           height: 40,
                           child: TextFormField(
+                            inputFormatters: <TextInputFormatter>[
+                              // for below version 2 use this
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]')),
+// for version 2 and greater youcan also use this
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             keyboardType: TextInputType.number,
                             style: const TextStyle(
                                 color: Colors.black, fontFamily: 'Quicksand'),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              day = value;
+                            },
                             decoration: const InputDecoration(
                               fillColor: Colors.white,
                               filled: true,
@@ -205,7 +283,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
                                   items: [
                                     for (int i = 0; i < years.length; i++)
                                       DropdownMenuItem(
-                                          onTap: () {},
+                                          onTap: () {
+                                            year = years[i];
+                                          },
                                           value: i,
                                           child: TextRegular(
                                               text: years[i],
@@ -263,9 +343,8 @@ class _AttendanceTabState extends State<AttendanceTab> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onLongPress: () {
-                        Fluttertoast.showToast(
-                            msg: 'Fingerprint scanned succesfully!');
+                      onTap: () {
+                        _authenticateWithBiometrics();
                       },
                       child: Image.asset(
                         'assets/images/fingerprint.png',
@@ -275,9 +354,32 @@ class _AttendanceTabState extends State<AttendanceTab> {
                     const SizedBox(
                       height: 10,
                     ),
-                    ButtonWidget(onPressed: () {}, text: 'Confirm')
+                    ButtonWidget(
+                        onPressed: () {
+                          if (authenticated) {
+                            Fluttertoast.showToast(
+                                msg: 'Attendance Added Succesfully!');
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                            if (_timeIn == true) {
+                              addAttendance(name, '$month/$day/$year',
+                                  nameOfEvent, 'Time In');
+                            } else {
+                              addAttendance(name, '$month/$day/$year',
+                                  nameOfEvent, 'Time Out');
+                            }
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: 'Cannot Proceed! Invalid Fingerprint');
+                          }
+                        },
+                        text: 'Confirm')
                   ],
                 )),
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),

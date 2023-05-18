@@ -48,28 +48,7 @@ class LandingScreen extends StatelessWidget {
                   fontSize: 12,
                   color: Colors.white),
               const SizedBox(
-                height: 50,
-              ),
-              MaterialButton(
-                height: 50,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                minWidth: 250,
-                color: Colors.white,
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: ((context) {
-                        return signupDialog(context);
-                      }));
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => const SignupPage()));
-                },
-                child: TextBold(text: 'SIGNUP', fontSize: 18, color: primary),
-              ),
-              const SizedBox(
-                height: 12,
+                height: 75,
               ),
               MaterialButton(
                 height: 50,
@@ -90,7 +69,7 @@ class LandingScreen extends StatelessWidget {
                 child: TextBold(text: 'LOGIN', fontSize: 18, color: primary),
               ),
               const SizedBox(
-                height: 50,
+                height: 20,
               ),
               Container(
                 decoration: BoxDecoration(
@@ -175,7 +154,7 @@ class LandingScreen extends StatelessWidget {
                                               Navigator.of(context).push(
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          AdminHomeScreen()));
+                                                          const AdminHomeScreen()));
                                             } else {
                                               Fluttertoast.showToast(
                                                   msg:
@@ -289,7 +268,7 @@ class LandingScreen extends StatelessWidget {
                       box.write('user', 'user');
                       Fluttertoast.showToast(msg: 'Login Succesfully!');
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => HomeScreen()));
+                          builder: (context) => const HomeScreen()));
                     } else {
                       Fluttertoast.showToast(msg: 'Invalid Account! Try again');
                     }

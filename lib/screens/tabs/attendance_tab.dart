@@ -1,6 +1,8 @@
 import 'package:biometrics_attendance/screens/home_screen.dart';
 import 'package:biometrics_attendance/services/add_attendance.dart';
+import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +10,8 @@ import 'package:local_auth/local_auth.dart';
 import '../../widgets/button_widget.dart';
 
 class AttendanceTab extends StatefulWidget {
+  const AttendanceTab({super.key});
+
   @override
   State<AttendanceTab> createState() => _AttendanceTabState();
 }
@@ -101,6 +105,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
     print(authenticated);
   }
 
+  String selectedItem = '';
+  int dropValue = 0;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -145,29 +152,80 @@ class _AttendanceTabState extends State<AttendanceTab> {
                 text: 'Name of event if any:',
                 fontSize: 14,
                 color: Colors.white),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: SizedBox(
-                height: 40,
-                child: TextFormField(
-                  style: const TextStyle(
-                      color: Colors.black, fontFamily: 'Quicksand'),
-                  onChanged: (value) {
-                    nameOfEvent = value;
-                  },
-                  decoration: const InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 1, color: Colors.white),
+            StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Event')
+                    .where('day', isEqualTo: DateTime.now().day)
+                    .where('month', isEqualTo: DateTime.now().month)
+                    .where('year', isEqualTo: DateTime.now().year)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    print('error');
+                    return const Center(child: Text('Error'));
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    print('waiting');
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 50),
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.black,
+                      )),
+                    );
+                  }
+
+                  final data = snapshot.requireData;
+
+                  return Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 30, right: 30),
+                      child: DropdownButton(
+                        iconEnabledColor: Colors.white,
+                        iconDisabledColor: Colors.white,
+                        dropdownColor: primary,
+                        underline: const SizedBox(),
+                        value: dropValue,
+                        items: [
+                          for (int i = 0; i < data.docs.length; i++)
+                            DropdownMenuItem(
+                              onTap: () {
+                                nameOfEvent = data.docs[i]['name'];
+                              },
+                              value: i,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 225,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      data.docs[i]['name'],
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'QBold',
+                                          fontSize: 14),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                        ],
+                        onChanged: (newValue) {
+                          setState(() {
+                            dropValue = int.parse(newValue.toString());
+                          });
+                        },
+                      ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 1, color: Colors.black),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+                  );
+                }),
             const SizedBox(
               height: 10,
             ),
@@ -356,22 +414,28 @@ class _AttendanceTabState extends State<AttendanceTab> {
                     ),
                     ButtonWidget(
                         onPressed: () {
-                          if (authenticated) {
-                            Fluttertoast.showToast(
-                                msg: 'Attendance Added Succesfully!');
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                            if (_timeIn == true) {
-                              addAttendance(name, '$month/$day/$year',
-                                  nameOfEvent, 'Time In');
-                            } else {
-                              addAttendance(name, '$month/$day/$year',
-                                  nameOfEvent, 'Time Out');
-                            }
+                          print(nameOfEvent);
+                          if (nameOfEvent == '') {
+                            Fluttertoast.showToast(msg: 'No event selected');
                           } else {
-                            Fluttertoast.showToast(
-                                msg: 'Cannot Proceed! Invalid Fingerprint');
+                            if (authenticated) {
+                              Fluttertoast.showToast(
+                                  msg: 'Attendance Added Succesfully!');
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HomeScreen()));
+                              if (_timeIn == true) {
+                                addAttendance(name, '$month/$day/$year',
+                                    nameOfEvent, 'Time In');
+                              } else {
+                                addAttendance(name, '$month/$day/$year',
+                                    nameOfEvent, 'Time Out');
+                              }
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: 'Cannot Proceed! Invalid Fingerprint');
+                            }
                           }
                         },
                         text: 'Confirm')

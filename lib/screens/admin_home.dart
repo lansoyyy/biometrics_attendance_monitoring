@@ -4,6 +4,7 @@ import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get_storage/get_storage.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -13,6 +14,16 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
+  final box = GetStorage();
+
+  late String id = '';
+  late String password = '';
+
+  late String newId = '';
+  late String newPassword = '';
+  late String confirmPassword = '';
+
+  late String adminPassword = '';
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -31,54 +42,76 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     padding: const EdgeInsets.only(right: 10, top: 20),
                     child: Align(
                       alignment: Alignment.bottomRight,
-                      child: IconButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      title: const Text(
-                                        'Logout Confirmation',
-                                        style: TextStyle(
-                                            fontFamily: 'QBold',
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      content: const Text(
-                                        'Are you sure you want to Logout?',
-                                        style:
-                                            TextStyle(fontFamily: 'QRegular'),
-                                      ),
-                                      actions: <Widget>[
-                                        MaterialButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(true),
-                                          child: const Text(
-                                            'Close',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: ((context) {
+                                    return signupDialog(context);
+                                  }));
+                            },
+                            icon: const Icon(
+                              Icons.account_circle_sharp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                          title: const Text(
+                                            'Logout Confirmation',
                                             style: TextStyle(
-                                                fontFamily: 'QRegular',
+                                                fontFamily: 'QBold',
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                        ),
-                                        MaterialButton(
-                                          onPressed: () {
-                                            Fluttertoast.showToast(
-                                                msg: 'Admin logged out!');
-                                            Navigator.of(context)
-                                                .pushReplacement(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            LandingScreen()));
-                                          },
-                                          child: const Text(
-                                            'Continue',
+                                          content: const Text(
+                                            'Are you sure you want to Logout?',
                                             style: TextStyle(
-                                                fontFamily: 'QRegular',
-                                                fontWeight: FontWeight.bold),
+                                                fontFamily: 'QRegular'),
                                           ),
-                                        ),
-                                      ],
-                                    ));
-                          },
-                          icon: const Icon(Icons.logout, color: Colors.white)),
+                                          actions: <Widget>[
+                                            MaterialButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(true),
+                                              child: const Text(
+                                                'Close',
+                                                style: TextStyle(
+                                                    fontFamily: 'QRegular',
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            MaterialButton(
+                                              onPressed: () {
+                                                Fluttertoast.showToast(
+                                                    msg: 'Admin logged out!');
+                                                Navigator.of(context)
+                                                    .pushReplacement(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                LandingScreen()));
+                                              },
+                                              child: const Text(
+                                                'Continue',
+                                                style: TextStyle(
+                                                    fontFamily: 'QRegular',
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ],
+                                        ));
+                              },
+                              icon: const Icon(Icons.logout,
+                                  color: Colors.white)),
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -263,6 +296,130 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget signupDialog(BuildContext context) {
+    return Dialog(
+      child: Container(
+        decoration: BoxDecoration(
+            color: secondary, borderRadius: BorderRadius.circular(5)),
+        height: 380,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextBold(text: 'SIGN UP', fontSize: 18, color: Colors.white),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: TextFormField(
+                  onChanged: ((value) {
+                    newId = value;
+                  }),
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      labelText: 'Enter STUDENT ID',
+                      labelStyle: TextStyle(
+                          color: Colors.white, fontFamily: 'QRegular')),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: TextFormField(
+                  obscureText: true,
+                  onChanged: ((value) {
+                    newPassword = value;
+                  }),
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      labelText: 'Enter Password',
+                      labelStyle: TextStyle(
+                          color: Colors.white, fontFamily: 'QRegular')),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: TextFormField(
+                  obscureText: true,
+                  onChanged: ((value) {
+                    confirmPassword = value;
+                  }),
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      labelText: 'Enter Confirm Password',
+                      labelStyle: TextStyle(
+                          color: Colors.white, fontFamily: 'QRegular')),
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              Center(
+                child: MaterialButton(
+                  height: 50,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  minWidth: 250,
+                  color: Colors.white,
+                  onPressed: () {
+                    if (newPassword == confirmPassword) {
+                      box.write('id', newId);
+                      box.write('password', newPassword);
+                      Fluttertoast.showToast(
+                          msg:
+                              'Account Created Succesfully! Login your Account');
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => LandingScreen()));
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: 'Password do not match! Try again');
+                    }
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //     builder: (context) => const SignupPage()));
+                  },
+                  child: TextBold(
+                      text: 'REGISTER', fontSize: 18, color: secondary),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:biometrics_attendance/screens/landing_screen.dart';
 import 'package:biometrics_attendance/screens/tabs/attendance_tab.dart';
 import 'package:biometrics_attendance/screens/tabs/list_tab.dart';
+import 'package:biometrics_attendance/screens/tabs/notif_tab.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
@@ -32,54 +33,73 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(right: 10, top: 20),
                     child: Align(
                       alignment: Alignment.bottomRight,
-                      child: IconButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      title: const Text(
-                                        'Logout Confirmation',
-                                        style: TextStyle(
-                                            fontFamily: 'QBold',
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      content: const Text(
-                                        'Are you sure you want to Logout?',
-                                        style:
-                                            TextStyle(fontFamily: 'QRegular'),
-                                      ),
-                                      actions: <Widget>[
-                                        MaterialButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(true),
-                                          child: const Text(
-                                            'Close',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const NotifTab()));
+                            },
+                            icon: const Icon(
+                              Icons.notifications,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                          title: const Text(
+                                            'Logout Confirmation',
                                             style: TextStyle(
-                                                fontFamily: 'QRegular',
+                                                fontFamily: 'QBold',
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                        ),
-                                        MaterialButton(
-                                          onPressed: () {
-                                            Fluttertoast.showToast(
-                                                msg: 'User logged out!');
-                                            Navigator.of(context)
-                                                .pushReplacement(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            LandingScreen()));
-                                          },
-                                          child: const Text(
-                                            'Continue',
+                                          content: const Text(
+                                            'Are you sure you want to Logout?',
                                             style: TextStyle(
-                                                fontFamily: 'QRegular',
-                                                fontWeight: FontWeight.bold),
+                                                fontFamily: 'QRegular'),
                                           ),
-                                        ),
-                                      ],
-                                    ));
-                          },
-                          icon: const Icon(Icons.logout, color: Colors.white)),
+                                          actions: <Widget>[
+                                            MaterialButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(true),
+                                              child: const Text(
+                                                'Close',
+                                                style: TextStyle(
+                                                    fontFamily: 'QRegular',
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            MaterialButton(
+                                              onPressed: () {
+                                                Fluttertoast.showToast(
+                                                    msg: 'User logged out!');
+                                                Navigator.of(context)
+                                                    .pushReplacement(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                LandingScreen()));
+                                              },
+                                              child: const Text(
+                                                'Continue',
+                                                style: TextStyle(
+                                                    fontFamily: 'QRegular',
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ],
+                                        ));
+                              },
+                              icon: const Icon(Icons.logout,
+                                  color: Colors.white)),
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -151,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SizedBox(
                 child: TabBarView(children: [
                   // const RegisterTab(),
-                  AttendanceTab(),
+                  const AttendanceTab(),
                   ListTab(),
                 ]),
               ),

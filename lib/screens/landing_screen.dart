@@ -2,6 +2,7 @@ import 'package:biometrics_attendance/screens/admin_home.dart';
 import 'package:biometrics_attendance/screens/home_screen.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
@@ -262,16 +263,17 @@ class LandingScreen extends StatelessWidget {
                   ),
                   minWidth: 250,
                   color: Colors.white,
-                  onPressed: () {
-                    if (id == box.read('id') &&
-                        password == box.read('password')) {
-                      box.write('user', 'user');
-                      Fluttertoast.showToast(msg: 'Login Succesfully!');
-                      Navigator.of(context).push(MaterialPageRoute(
+                  onPressed: () async {
+                    try {
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                          email: '$id@gmail.com', password: password);
+
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => const HomeScreen()));
-                    } else {
-                      Fluttertoast.showToast(msg: 'Invalid Account! Try again');
+                    } catch (e) {
+                      Fluttertoast.showToast(msg: e.toString());
                     }
+
                     // Navigator.of(context).push(MaterialPageRoute(
                     //     builder: (context) => const SignupPage()));
                   },

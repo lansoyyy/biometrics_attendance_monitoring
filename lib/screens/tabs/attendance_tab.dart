@@ -69,6 +69,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
   bool authenticated = false;
 
   String course = '';
+  String userId = '';
 
   getMyCourse() {
     FirebaseFirestore.instance
@@ -79,6 +80,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
       for (var doc in querySnapshot.docs) {
         setState(() {
           course = doc['course'];
+          userId = doc['studentId'];
         });
       }
     });
@@ -451,10 +453,10 @@ class _AttendanceTabState extends State<AttendanceTab> {
                                           const HomeScreen()));
                               if (_timeIn == true) {
                                 addAttendance(name, '$month/$day/$year',
-                                    nameOfEvent, 'Time In', course);
+                                    nameOfEvent, 'Time In', course, userId);
                               } else {
                                 addAttendance(name, '$month/$day/$year',
-                                    nameOfEvent, 'Time Out', course);
+                                    nameOfEvent, 'Time Out', course, userId);
                               }
                             } else {
                               Fluttertoast.showToast(

@@ -315,10 +315,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               IconButton(
                                 onPressed: () {
                                   if (names.isEmpty) {
-                                    _createPdf();
-                                  } else {
                                     Fluttertoast.showToast(
                                         msg: 'Attendance List is Empty');
+                                  } else {
+                                    _createPdf();
                                   }
                                 },
                                 icon: const Icon(

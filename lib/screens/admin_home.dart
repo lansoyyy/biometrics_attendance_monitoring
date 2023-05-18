@@ -8,6 +8,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:intl/intl.dart';
+import 'package:printing/printing.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -45,7 +49,84 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     'BSECE',
   ];
 
+  final doc = pw.Document();
+
   String selectedItem = 'BSIT';
+
+  List names = [];
+  List types = [];
+  List ids = [];
+
+  String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
+
+  void _createPdf() async {
+    /// for using an image from assets
+    // final image = await imageFromAssetBundle('assets/image.png');
+
+    final image = await imageFromAssetBundle('assets/images/logo.jpg');
+
+    doc.addPage(
+      pw.Page(
+        build: ((context) {
+          return pw.Column(children: [
+            pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Center(
+                    child: pw.Image(image, height: 80, width: 80),
+                  ),
+                  pw.Column(children: [
+                    pw.SizedBox(height: 20),
+                    pw.Text('Carlos Hilado Memorial State University',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    pw.SizedBox(height: 5),
+                    pw.Text('Bacolod, 6100 Negros Occidental',
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.normal, fontSize: 10)),
+                  ]),
+                  pw.SizedBox(width: 20),
+                ]),
+            pw.SizedBox(height: 20),
+            pw.Text(cdate2),
+            pw.SizedBox(height: 10),
+            pw.Text('Attendance List - $selectedItem'),
+            pw.SizedBox(height: 20),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+                  children: [
+                    pw.Text('Student ID No.'),
+                    pw.Text('Student Name'),
+                    pw.Text('Attendance Type'),
+                  ],
+                ),
+                for (int i = 0; i < ids.length; i++)
+                  pw.TableRow(
+                    children: [
+                      pw.Text(ids[i]),
+                      pw.Text(names[i]),
+                      pw.Text(types[i]),
+                    ],
+                  ),
+              ],
+            ),
+          ]);
+        }),
+        pageFormat: PdfPageFormat.a4,
+      ),
+    ); // Page
+
+    /// print the document using the iOS or Android print service:
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => doc.save());
+
+    /// share the document to other applications:
+
+    /// tutorial for using path_provider: https://www.youtube.com/watch?v=fJtFDrjEvE8
+    /// save PDF with Flutter library "path_provider":
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -218,158 +299,191 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 child: TabBarView(children: [
                   // const RegisterTab(),
                   // AttendanceTab(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: TextBold(
-                            text: "Student's Attendance History",
-                            fontSize: 18,
-                            color: Colors.white),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.white,
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextBold(
+                                  text: "Student's Attendance History",
+                                  fontSize: 18,
+                                  color: Colors.white),
+                              IconButton(
+                                onPressed: () {
+                                  if (names.isEmpty) {
+                                    _createPdf();
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: 'Attendance List is Empty');
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.print,
+                                  color: Colors.white,
+                                ),
                               ),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 30, right: 30),
-                            child: DropdownButton<String>(
-                              underline: const SizedBox(),
-                              value: selectedItem,
-                              items: dropdownItems.map((String item) {
-                                return DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Center(
-                                    child: SizedBox(
-                                      width: 225,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontFamily: 'QBold',
-                                              fontSize: 14),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 30, right: 30),
+                              child: DropdownButton<String>(
+                                underline: const SizedBox(),
+                                value: selectedItem,
+                                items: dropdownItems.map((String item) {
+                                  return DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 225,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'QBold',
+                                                fontSize: 14),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  selectedItem = newValue.toString();
-                                });
-                              },
+                                  );
+                                }).toList(),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    selectedItem = newValue.toString();
+                                  });
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('Attendance')
-                              .where('course', isEqualTo: selectedItem)
-                              .snapshots(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasError) {
-                              print('error');
-                              return const Center(child: Text('Error'));
-                            }
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              print('waiting');
-                              return const Padding(
-                                padding: EdgeInsets.only(top: 50),
-                                child: Center(
-                                    child: CircularProgressIndicator(
-                                  color: Colors.black,
-                                )),
-                              );
-                            }
+                        StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('Attendance')
+                                .where('course', isEqualTo: selectedItem)
+                                .snapshots(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasError) {
+                                print('error');
+                                return const Center(child: Text('Error'));
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                print('waiting');
+                                return const Padding(
+                                  padding: EdgeInsets.only(top: 50),
+                                  child: Center(
+                                      child: CircularProgressIndicator(
+                                    color: Colors.black,
+                                  )),
+                                );
+                              }
 
-                            final data = snapshot.requireData;
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 20),
-                              child: Container(
-                                height: 400,
-                                width: double.infinity,
-                                color: Colors.white,
-                                child: SingleChildScrollView(
-                                  child: DataTable(
-                                      border: TableBorder.all(
-                                        color: Colors.grey,
-                                      ),
-                                      columns: [
-                                        DataColumn(
-                                            label: TextBold(
-                                                text: 'Name',
-                                                fontSize: 14,
-                                                color: Colors.black)),
-                                        DataColumn(
-                                            label: TextBold(
-                                                text: 'Event',
-                                                fontSize: 14,
-                                                color: Colors.black)),
-                                        DataColumn(
-                                            label: TextBold(
-                                                text: 'Date',
-                                                fontSize: 14,
-                                                color: Colors.black)),
-                                      ],
-                                      rows: [
-                                        for (int i = 0;
-                                            i < data.docs.length;
-                                            i++)
-                                          DataRow(
-                                              color: MaterialStateProperty
-                                                  .resolveWith<Color?>(
-                                                      (Set<MaterialState>
-                                                          states) {
-                                                if (i.floor().isEven) {
-                                                  return Colors.blueGrey[100];
-                                                }
-                                                return null; // Use the default value.
-                                              }),
-                                              cells: [
-                                                DataCell(
-                                                  TextRegular(
-                                                      text: data.docs[i]
-                                                          ['name'],
-                                                      fontSize: 12,
-                                                      color: Colors.black),
-                                                ),
-                                                DataCell(
-                                                  TextRegular(
-                                                      text:
-                                                          '${data.docs[i]['nameOfEvent']} - ${data.docs[i]['type']}',
-                                                      fontSize: 12,
-                                                      color: Colors.black),
-                                                ),
-                                                DataCell(
-                                                  TextRegular(
-                                                      text: data.docs[i]
-                                                          ['date'],
-                                                      fontSize: 12,
-                                                      color: Colors.black),
-                                                )
-                                              ]),
-                                      ]),
+                              final data = snapshot.requireData;
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                                child: Container(
+                                  height: 400,
+                                  width: double.infinity,
+                                  color: Colors.white,
+                                  child: SingleChildScrollView(
+                                    child: DataTable(
+                                        border: TableBorder.all(
+                                          color: Colors.grey,
+                                        ),
+                                        columns: [
+                                          DataColumn(
+                                              label: TextBold(
+                                                  text: 'Name',
+                                                  fontSize: 14,
+                                                  color: Colors.black)),
+                                          DataColumn(
+                                              label: TextBold(
+                                                  text: 'Event',
+                                                  fontSize: 14,
+                                                  color: Colors.black)),
+                                          DataColumn(
+                                              label: TextBold(
+                                                  text: 'Date',
+                                                  fontSize: 14,
+                                                  color: Colors.black)),
+                                        ],
+                                        rows: [
+                                          for (int i = 0;
+                                              i < data.docs.length;
+                                              i++)
+                                            DataRow(
+                                                color: MaterialStateProperty
+                                                    .resolveWith<Color?>(
+                                                        (Set<MaterialState>
+                                                            states) {
+                                                  if (i.floor().isEven) {
+                                                    return Colors.blueGrey[100];
+                                                  }
+                                                  return null; // Use the default value.
+                                                }),
+                                                cells: [
+                                                  DataCell(
+                                                    Builder(builder: (context) {
+                                                      ids.clear();
+                                                      names.clear();
+                                                      types.clear();
+                                                      ids.add(
+                                                          data.docs[i]['id']);
+                                                      names.add(
+                                                          data.docs[i]['name']);
+                                                      types.add(
+                                                          data.docs[i]['type']);
+                                                      return TextRegular(
+                                                          text: data.docs[i]
+                                                              ['name'],
+                                                          fontSize: 12,
+                                                          color: Colors.black);
+                                                    }),
+                                                  ),
+                                                  DataCell(
+                                                    TextRegular(
+                                                        text:
+                                                            '${data.docs[i]['nameOfEvent']} - ${data.docs[i]['type']}',
+                                                        fontSize: 12,
+                                                        color: Colors.black),
+                                                  ),
+                                                  DataCell(
+                                                    TextRegular(
+                                                        text: data.docs[i]
+                                                            ['date'],
+                                                        fontSize: 12,
+                                                        color: Colors.black),
+                                                  )
+                                                ]),
+                                        ]),
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
-                    ],
+                              );
+                            }),
+                      ],
+                    ),
                   )
                 ]),
               ),

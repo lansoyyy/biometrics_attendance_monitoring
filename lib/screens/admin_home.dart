@@ -1,4 +1,5 @@
 import 'package:biometrics_attendance/screens/landing_screen.dart';
+import 'package:biometrics_attendance/screens/tabs/event_tab.dart';
 import 'package:biometrics_attendance/services/add_user.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
@@ -77,6 +78,16 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             },
                             icon: const Icon(
                               Icons.account_circle_sharp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const EventTab()));
+                            },
+                            icon: const Icon(
+                              Icons.event,
                               color: Colors.white,
                             ),
                           ),

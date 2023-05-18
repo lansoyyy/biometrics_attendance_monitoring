@@ -228,10 +228,56 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             fontSize: 18,
                             color: Colors.white),
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 30, right: 30),
+                            child: DropdownButton<String>(
+                              underline: const SizedBox(),
+                              value: selectedItem,
+                              items: dropdownItems.map((String item) {
+                                return DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 225,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'QBold',
+                                              fontSize: 14),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  selectedItem = newValue.toString();
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
                       StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('Attendance')
-                              .orderBy('dateTime', descending: true)
+                              .where('course', isEqualTo: selectedItem)
                               .snapshots(),
                           builder: (BuildContext context,
                               AsyncSnapshot<QuerySnapshot> snapshot) {

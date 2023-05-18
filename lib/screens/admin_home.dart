@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AdminHomeScreen extends StatefulWidget {
+  const AdminHomeScreen({super.key});
+
   @override
   State<AdminHomeScreen> createState() => _AdminHomeScreenState();
 }
@@ -46,7 +48,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                             TextStyle(fontFamily: 'QRegular'),
                                       ),
                                       actions: <Widget>[
-                                        FlatButton(
+                                        MaterialButton(
                                           onPressed: () =>
                                               Navigator.of(context).pop(true),
                                           child: const Text(
@@ -56,7 +58,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        FlatButton(
+                                        MaterialButton(
                                           onPressed: () {
                                             Fluttertoast.showToast(
                                                 msg: 'Admin logged out!');

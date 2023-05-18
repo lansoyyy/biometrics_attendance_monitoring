@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -47,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             TextStyle(fontFamily: 'QRegular'),
                                       ),
                                       actions: <Widget>[
-                                        FlatButton(
+                                        MaterialButton(
                                           onPressed: () =>
                                               Navigator.of(context).pop(true),
                                           child: const Text(
@@ -57,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        FlatButton(
+                                        MaterialButton(
                                           onPressed: () {
                                             Fluttertoast.showToast(
                                                 msg: 'User logged out!');

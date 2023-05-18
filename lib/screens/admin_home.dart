@@ -1,7 +1,9 @@
 import 'package:biometrics_attendance/screens/landing_screen.dart';
+import 'package:biometrics_attendance/services/add_user.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
@@ -24,6 +26,26 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   late String confirmPassword = '';
 
   late String adminPassword = '';
+  String name = '';
+
+  List<String> dropdownItems = [
+    'BSIT',
+    'BSIS',
+    'BS IND TECH (ARCHITECTURAL DRAFTING)',
+    'BS IND TECH (AUTOMOTIVE)',
+    'BS IND TECH (COMPUTER TECHNOLOGY)',
+    'BS IND TECH (ELECTRICAL TECHNOLOGY)',
+    'BS IND TECH (ELECTRONICS TECHNOLOGY)',
+    'BS IND TECH (FOOD TRADES TECHNOLOGY)',
+    'BS IND TECH (MECHANICAL TECHNOLOGY)',
+    'BTVTED (ELECTRICAL TECHNOLOGY)',
+    'BTVTED (ELECTRONICS TECHNOLOGY)',
+    'BSCPE',
+    'BSECE',
+  ];
+
+  String selectedItem = 'BSIT';
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -306,120 +328,204 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       child: Container(
         decoration: BoxDecoration(
             color: secondary, borderRadius: BorderRadius.circular(5)),
-        height: 380,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextBold(text: 'SIGN UP', fontSize: 18, color: Colors.white),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: TextFormField(
-                  onChanged: ((value) {
-                    newId = value;
-                  }),
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      labelText: 'Enter STUDENT ID',
-                      labelStyle: TextStyle(
-                          color: Colors.white, fontFamily: 'QRegular')),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: TextFormField(
-                  obscureText: true,
-                  onChanged: ((value) {
-                    newPassword = value;
-                  }),
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      labelText: 'Enter Password',
-                      labelStyle: TextStyle(
-                          color: Colors.white, fontFamily: 'QRegular')),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: TextFormField(
-                  obscureText: true,
-                  onChanged: ((value) {
-                    confirmPassword = value;
-                  }),
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      labelText: 'Enter Confirm Password',
-                      labelStyle: TextStyle(
-                          color: Colors.white, fontFamily: 'QRegular')),
-                ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Center(
-                child: MaterialButton(
-                  height: 50,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+          child: StatefulBuilder(builder: (context, setState) {
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextBold(text: 'SIGN UP', fontSize: 18, color: Colors.white),
+                  const SizedBox(
+                    height: 20,
                   ),
-                  minWidth: 250,
-                  color: Colors.white,
-                  onPressed: () {
-                    if (newPassword == confirmPassword) {
-                      box.write('id', newId);
-                      box.write('password', newPassword);
-                      Fluttertoast.showToast(
-                          msg:
-                              'Account Created Succesfully! Login your Account');
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => LandingScreen()));
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: 'Password do not match! Try again');
-                    }
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) => const SignupPage()));
-                  },
-                  child: TextBold(
-                      text: 'REGISTER', fontSize: 18, color: secondary),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: TextFormField(
+                      onChanged: ((value) {
+                        name = value;
+                      }),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          labelText: 'Enter Student Name',
+                          labelStyle: TextStyle(
+                              color: Colors.white, fontFamily: 'QRegular')),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: TextFormField(
+                      onChanged: ((value) {
+                        newId = value;
+                      }),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          labelText: 'Enter STUDENT ID',
+                          labelStyle: TextStyle(
+                              color: Colors.white, fontFamily: 'QRegular')),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: TextFormField(
+                      obscureText: true,
+                      onChanged: ((value) {
+                        newPassword = value;
+                      }),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          labelText: 'Enter Password',
+                          labelStyle: TextStyle(
+                              color: Colors.white, fontFamily: 'QRegular')),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: TextFormField(
+                      obscureText: true,
+                      onChanged: ((value) {
+                        confirmPassword = value;
+                      }),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          labelText: 'Confirm Password',
+                          labelStyle: TextStyle(
+                              color: Colors.white, fontFamily: 'QRegular')),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, bottom: 10),
+                    child: TextRegular(
+                        text: 'Course:', fontSize: 14, color: Colors.white),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: DropdownButton<String>(
+                        underline: const SizedBox(),
+                        value: selectedItem,
+                        items: dropdownItems.map((String item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Center(
+                              child: SizedBox(
+                                width: 225,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'QRegular',
+                                        fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedItem = newValue.toString();
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Center(
+                    child: MaterialButton(
+                      height: 50,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minWidth: 250,
+                      color: Colors.white,
+                      onPressed: () async {
+                        if (newPassword == confirmPassword) {
+                          try {
+                            final user = await FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                                    email: '$newId@gmail.com',
+                                    password: newPassword);
+
+                            addUser(newId, name, selectedItem, user.user!.uid);
+                            Fluttertoast.showToast(
+                                msg: 'Account Created Succesfully!');
+                            Navigator.of(context).pop();
+                          } catch (e) {
+                            Fluttertoast.showToast(msg: e.toString());
+                          }
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: 'Password do not match! Try again');
+                        }
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) => const SignupPage()));
+                      },
+                      child: TextBold(
+                          text: 'REGISTER', fontSize: 18, color: secondary),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          }),
         ),
       ),
     );

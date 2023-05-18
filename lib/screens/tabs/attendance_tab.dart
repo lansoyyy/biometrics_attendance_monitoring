@@ -3,6 +3,7 @@ import 'package:biometrics_attendance/services/add_attendance.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +18,13 @@ class AttendanceTab extends StatefulWidget {
 }
 
 class _AttendanceTabState extends State<AttendanceTab> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMyCourse();
+  }
+
   var months = [
     "January",
     "February",
@@ -59,6 +67,22 @@ class _AttendanceTabState extends State<AttendanceTab> {
   String _authorized = 'Not Authorized';
   bool _isAuthenticating = false;
   bool authenticated = false;
+
+  String course = '';
+
+  getMyCourse() {
+    FirebaseFirestore.instance
+        .collection('Users')
+        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        setState(() {
+          course = doc['course'];
+        });
+      }
+    });
+  }
 
   Future<void> _authenticateWithBiometrics() async {
     // only Biometrics
@@ -427,10 +451,10 @@ class _AttendanceTabState extends State<AttendanceTab> {
                                           const HomeScreen()));
                               if (_timeIn == true) {
                                 addAttendance(name, '$month/$day/$year',
-                                    nameOfEvent, 'Time In');
+                                    nameOfEvent, 'Time In', course);
                               } else {
                                 addAttendance(name, '$month/$day/$year',
-                                    nameOfEvent, 'Time Out');
+                                    nameOfEvent, 'Time Out', course);
                               }
                             } else {
                               Fluttertoast.showToast(

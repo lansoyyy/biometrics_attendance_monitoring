@@ -27,8 +27,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   late String password = '';
 
   late String newId = '';
-  late String newPassword = '';
-  late String confirmPassword = '';
 
   late String adminPassword = '';
   String name = '';
@@ -560,56 +558,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     height: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: TextFormField(
-                      obscureText: true,
-                      onChanged: ((value) {
-                        newPassword = value;
-                      }),
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          labelText: 'Enter Password',
-                          labelStyle: TextStyle(
-                              color: Colors.white, fontFamily: 'QRegular')),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: TextFormField(
-                      obscureText: true,
-                      onChanged: ((value) {
-                        confirmPassword = value;
-                      }),
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          labelText: 'Confirm Password',
-                          labelStyle: TextStyle(
-                              color: Colors.white, fontFamily: 'QRegular')),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
                     child: TextRegular(
                         text: 'Course:', fontSize: 14, color: Colors.white),
@@ -665,24 +613,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       minWidth: 250,
                       color: Colors.white,
                       onPressed: () async {
-                        if (newPassword == confirmPassword) {
-                          try {
-                            final user = await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                    email: '$newId@gmail.com',
-                                    password: newPassword);
+                        try {
+                          final user = await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                                  email: '$newId@gmail.com',
+                                  password: name + newId);
 
-                            addUser(newId, name, selectedItem, user.user!.uid);
-                            Fluttertoast.showToast(
-                                msg: 'Account Created Succesfully!');
-                            Navigator.of(context).pop();
-                          } catch (e) {
-                            Fluttertoast.showToast(msg: e.toString());
-                          }
-                        } else {
+                          addUser(newId, name, selectedItem, user.user!.uid);
                           Fluttertoast.showToast(
-                              msg: 'Password do not match! Try again');
+                              msg:
+                                  'Account Created Succesfully!\nPassword is: ${name + newId} (Student name + Student Id)');
+                          Navigator.of(context).pop();
+                        } catch (e) {
+                          Fluttertoast.showToast(msg: e.toString());
                         }
+
                         // Navigator.of(context).push(MaterialPageRoute(
                         //     builder: (context) => const SignupPage()));
                       },

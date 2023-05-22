@@ -452,11 +452,11 @@ class _AttendanceTabState extends State<AttendanceTab> {
                                       builder: (context) =>
                                           const HomeScreen()));
                               if (_timeIn == true) {
-                                addAttendance(name, '$month/$day/$year',
-                                    nameOfEvent, 'Time In', course, userId);
+                                addAttendance(name, nameOfEvent, 'Time In',
+                                    course, userId);
                               } else {
-                                addAttendance(name, '$month/$day/$year',
-                                    nameOfEvent, 'Time Out', course, userId);
+                                addAttendance(name, nameOfEvent, 'Time Out',
+                                    course, userId);
                               }
                             } else {
                               Fluttertoast.showToast(

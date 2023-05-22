@@ -1,5 +1,4 @@
 import 'package:biometrics_attendance/firebase_options.dart';
-import 'package:biometrics_attendance/screens/home_screen.dart';
 import 'package:biometrics_attendance/screens/landing_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

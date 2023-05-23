@@ -620,10 +620,36 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                   password: name + newId);
 
                           addUser(newId, name, selectedItem, user.user!.uid);
-                          Fluttertoast.showToast(
-                              msg:
-                                  'Account Created Succesfully!\nPassword is: ${name + newId} (Student name + Student Id)');
+
                           Navigator.of(context).pop();
+
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: const Text(
+                                      "Student's Password",
+                                      style: TextStyle(
+                                          fontFamily: 'QBold',
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    content: Text(
+                                      'Password is: ${name + newId} (Student name + Student Id)',
+                                      style: const TextStyle(
+                                          fontFamily: 'QRegular'),
+                                    ),
+                                    actions: <Widget>[
+                                      MaterialButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(true),
+                                        child: const Text(
+                                          'Close',
+                                          style: TextStyle(
+                                              fontFamily: 'QRegular',
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ));
                         } catch (e) {
                           Fluttertoast.showToast(msg: e.toString());
                         }

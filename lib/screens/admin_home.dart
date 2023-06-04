@@ -1,3 +1,4 @@
+import 'package:biometrics_attendance/screens/accounts_page.dart';
 import 'package:biometrics_attendance/screens/landing_screen.dart';
 import 'package:biometrics_attendance/screens/tabs/event_tab.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
@@ -146,11 +147,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              // showDialog(
-                              //     context: context,
-                              //     builder: ((context) {
-                              //       return signupDialog(context);
-                              //     }));
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const AccountsPage()));
                             },
                             icon: const Icon(
                               Icons.account_circle_sharp,
@@ -204,7 +202,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                     .pushReplacement(
                                                         MaterialPageRoute(
                                                             builder: (context) =>
-                                                                LandingScreen()));
+                                                                const LandingScreen()));
                                               },
                                               child: const Text(
                                                 'Continue',

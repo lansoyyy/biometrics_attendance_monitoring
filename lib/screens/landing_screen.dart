@@ -3,22 +3,34 @@ import 'package:biometrics_attendance/screens/home_screen.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 import '../services/add_user.dart';
+import 'dart:io';
 
-class LandingScreen extends StatelessWidget {
-  LandingScreen({Key? key}) : super(key: key);
+class LandingScreen extends StatefulWidget {
+  const LandingScreen({Key? key}) : super(key: key);
 
+  @override
+  State<LandingScreen> createState() => _LandingScreenState();
+}
+
+class _LandingScreenState extends State<LandingScreen> {
   final box = GetStorage();
 
   late String id = '';
+
   late String password = '';
 
   late String newId = '';
+
   late String newPassword = '';
+
   late String confirmPassword = '';
 
   late String adminPassword = '';
@@ -40,7 +52,74 @@ class LandingScreen extends StatelessWidget {
     'BSCPE',
     'BSECE',
   ];
+
   String selectedItem = 'BSIT';
+
+  late String fileName = '';
+
+  late File imageFile;
+
+  late String imageURL = '';
+
+  Future<void> uploadPicture(String inputSource) async {
+    final picker = ImagePicker();
+    XFile pickedImage;
+    try {
+      pickedImage = (await picker.pickImage(
+          source: inputSource == 'camera'
+              ? ImageSource.camera
+              : ImageSource.gallery,
+          maxWidth: 1920))!;
+
+      fileName = path.basename(pickedImage.path);
+      imageFile = File(pickedImage.path);
+
+      try {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30),
+            child: AlertDialog(
+                title: Row(
+              children: const [
+                CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Loading . . .',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'QRegular'),
+                ),
+              ],
+            )),
+          ),
+        );
+
+        await firebase_storage.FirebaseStorage.instance
+            .ref('Users/$fileName')
+            .putFile(imageFile);
+        imageURL = await firebase_storage.FirebaseStorage.instance
+            .ref('Users/$fileName')
+            .getDownloadURL();
+
+        Navigator.of(context).pop();
+      } on firebase_storage.FirebaseException catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+      }
+    } catch (err) {
+      if (kDebugMode) {
+        print(err);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -347,6 +426,46 @@ class LandingScreen extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
+                  imageURL == ''
+                      ? Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              uploadPicture('camera');
+                            },
+                            child: Container(
+                              height: 175,
+                              width: 175,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.add,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            uploadPicture('camera');
+                          },
+                          child: Center(
+                            child: Container(
+                              height: 175,
+                              width: 175,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Image.network(imageURL, fit: BoxFit.cover),
+                            ),
+                          ),
+                        ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     child: TextFormField(
@@ -452,42 +571,51 @@ class LandingScreen extends StatelessWidget {
                       color: Colors.white,
                       onPressed: () async {
                         try {
-                          final user = await FirebaseAuth.instance
-                              .createUserWithEmailAndPassword(
-                                  email: '$newId@gmail.com',
-                                  password: name + newId);
+                          // final user = await FirebaseAuth.instance
+                          //     .createUserWithEmailAndPassword(
+                          //         email: '$newId@gmail.com',
+                          //         password: name + newId);
 
-                          addUser(newId, name, selectedItem, user.user!.uid);
+                          if (imageURL != '') {
+                            addUser(newId, name, selectedItem, imageURL);
+
+                            Fluttertoast.showToast(
+                                msg:
+                                    'Wait for the confirmation of your registration');
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: 'Please upload your enrollment form');
+                          }
 
                           Navigator.of(context).pop();
 
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: const Text(
-                                      "Student's Password",
-                                      style: TextStyle(
-                                          fontFamily: 'QBold',
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    content: Text(
-                                      'Password is: ${name + newId} (Student name + Student Id)',
-                                      style: const TextStyle(
-                                          fontFamily: 'QRegular'),
-                                    ),
-                                    actions: <Widget>[
-                                      MaterialButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(true),
-                                        child: const Text(
-                                          'Close',
-                                          style: TextStyle(
-                                              fontFamily: 'QRegular',
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ],
-                                  ));
+                          // showDialog(
+                          //     context: context,
+                          //     builder: (context) => AlertDialog(
+                          //           title: const Text(
+                          //             "Student's Password",
+                          //             style: TextStyle(
+                          //                 fontFamily: 'QBold',
+                          //                 fontWeight: FontWeight.bold),
+                          //           ),
+                          //           content: Text(
+                          //             'Password is: ${name + newId} (Student name + Student Id)',
+                          //             style: const TextStyle(
+                          //                 fontFamily: 'QRegular'),
+                          //           ),
+                          //           actions: <Widget>[
+                          //             MaterialButton(
+                          //               onPressed: () =>
+                          //                   Navigator.of(context).pop(true),
+                          //               child: const Text(
+                          //                 'Close',
+                          //                 style: TextStyle(
+                          //                     fontFamily: 'QRegular',
+                          //                     fontWeight: FontWeight.bold),
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ));
                         } catch (e) {
                           Fluttertoast.showToast(msg: e.toString());
                         }

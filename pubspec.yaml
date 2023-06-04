@@ -40,6 +40,8 @@ dependencies:
   cloud_firestore:
   local_auth:
   firebase_auth:
+  image_picker:
+  firebase_storage:
   printing: ^5.9.3
 
 dev_dependencies:

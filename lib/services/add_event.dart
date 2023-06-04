@@ -1,7 +1,7 @@
 import 'package:biometrics_attendance/services/add_notif.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future addEvent(name, DateTime date) async {
+Future addEvent(name, DateTime date, course) async {
   final docUser = FirebaseFirestore.instance.collection('Event').doc();
 
   final json = {
@@ -11,7 +11,8 @@ Future addEvent(name, DateTime date) async {
     'year': date.year,
     'dateTime': DateTime.now(),
     'id': docUser.id,
-    'status': 'Normal'
+    'status': 'Normal',
+    'course': course
   };
 
   addNotif(name, date);

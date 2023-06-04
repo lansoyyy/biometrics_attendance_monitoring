@@ -18,8 +18,27 @@ class _EventTabState extends State<EventTab> {
   String name = '';
 
   bool _value = false;
+
+  List<String> dropdownItems = [
+    'BSIT',
+    'BSIS',
+    'BS IND TECH (ARCHITECTURAL DRAFTING)',
+    'BS IND TECH (AUTOMOTIVE)',
+    'BS IND TECH (COMPUTER TECHNOLOGY)',
+    'BS IND TECH (ELECTRICAL TECHNOLOGY)',
+    'BS IND TECH (ELECTRONICS TECHNOLOGY)',
+    'BS IND TECH (FOOD TRADES TECHNOLOGY)',
+    'BS IND TECH (MECHANICAL TECHNOLOGY)',
+    'BTVTED (ELECTRICAL TECHNOLOGY)',
+    'BTVTED (ELECTRONICS TECHNOLOGY)',
+    'BSCPE',
+    'BSECE',
+  ];
+
+  String selectedItem = 'BSIT';
   @override
   Widget build(BuildContext context) {
+    print(_value);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: primary,
@@ -98,6 +117,59 @@ class _EventTabState extends State<EventTab> {
                               ),
                             ],
                           ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 10, bottom: 10),
+                              child: TextRegular(
+                                  text: 'Course:',
+                                  fontSize: 14,
+                                  color: primary),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: primary,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: DropdownButton<String>(
+                                underline: const SizedBox(),
+                                value: selectedItem,
+                                items: dropdownItems.map((String item) {
+                                  return DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 225,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'QRegular',
+                                                fontSize: 14),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    selectedItem = newValue.toString();
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -112,7 +184,7 @@ class _EventTabState extends State<EventTab> {
                     ),
                     TextButton(
                       onPressed: () {
-                        addEvent(name, _selectedDate);
+                        addEvent(name, _selectedDate, selectedItem);
                         Navigator.pop(context);
                         Fluttertoast.showToast(msg: 'Event Added!');
                       },
@@ -138,8 +210,6 @@ class _EventTabState extends State<EventTab> {
               onChanged: (value) {
                 setState(() {
                   _value = value;
-                  if (_value == true) {
-                  } else {}
                 });
               },
             ),
@@ -202,7 +272,18 @@ class _EventTabState extends State<EventTab> {
                                   color: Colors.grey,
                                 ),
                               )
-                            : const SizedBox(),
+                            : IconButton(
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('Event')
+                                      .doc(data.docs[index].id)
+                                      .update({'status': 'Normal'});
+                                },
+                                icon: const Icon(
+                                  Icons.visibility,
+                                  color: Colors.grey,
+                                ),
+                              ),
                       ),
                     ),
                   );

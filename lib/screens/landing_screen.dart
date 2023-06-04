@@ -434,18 +434,29 @@ class _LandingScreenState extends State<LandingScreen> {
                             onTap: () {
                               uploadPicture('camera');
                             },
-                            child: Container(
-                              height: 175,
-                              width: 175,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.add,
+                            child: Column(
+                              children: [
+                                TextRegular(
+                                    text: 'Upload enrollment form',
+                                    fontSize: 12,
+                                    color: Colors.white),
+                                const SizedBox(
+                                  height: 5,
                                 ),
-                              ),
+                                Container(
+                                  height: 175,
+                                  width: 175,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.add,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         )
@@ -454,14 +465,26 @@ class _LandingScreenState extends State<LandingScreen> {
                             uploadPicture('camera');
                           },
                           child: Center(
-                            child: Container(
-                              height: 175,
-                              width: 175,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Image.network(imageURL, fit: BoxFit.cover),
+                            child: Column(
+                              children: [
+                                TextRegular(
+                                    text: 'Upload enrollment form',
+                                    fontSize: 12,
+                                    color: Colors.white),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Container(
+                                  height: 175,
+                                  width: 175,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Image.network(imageURL,
+                                      fit: BoxFit.cover),
+                                ),
+                              ],
                             ),
                           ),
                         ),

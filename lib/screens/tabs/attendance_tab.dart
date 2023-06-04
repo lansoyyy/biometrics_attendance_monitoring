@@ -143,6 +143,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
 
   @override
   Widget build(BuildContext context) {
+    print('hey $course');
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20),
       child: SingleChildScrollView(
@@ -164,6 +165,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
                     .where('day', isEqualTo: DateTime.now().day)
                     .where('month', isEqualTo: DateTime.now().month)
                     .where('year', isEqualTo: DateTime.now().year)
+                    .where('course', isEqualTo: course)
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {

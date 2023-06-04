@@ -3,10 +3,10 @@ import 'package:biometrics_attendance/services/add_attendance.dart';
 import 'package:biometrics_attendance/utils/colors.dart';
 import 'package:biometrics_attendance/widgets/text_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../widgets/button_widget.dart';
 
@@ -51,13 +51,13 @@ class _AttendanceTabState extends State<AttendanceTab> {
   bool _timeIn = false;
   bool _timeOut = false;
 
-  var _value = 0;
-  var _value1 = 0;
+  final _value = 0;
+  final _value1 = 0;
 
   String month = '01';
   String day = '';
   String year = '2023';
-  String name = '';
+
   String nameOfEvent = '';
 
   final LocalAuthentication auth = LocalAuthentication();
@@ -70,17 +70,24 @@ class _AttendanceTabState extends State<AttendanceTab> {
 
   String course = '';
   String userId = '';
+  String myname = '';
+
+  final box = GetStorage();
 
   getMyCourse() {
     FirebaseFirestore.instance
         .collection('Users')
-        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where(
+          'id',
+          isEqualTo: box.read('id'),
+        )
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
         setState(() {
           course = doc['course'];
           userId = doc['studentId'];
+          myname = doc['name'];
         });
       }
     });
@@ -144,33 +151,6 @@ class _AttendanceTabState extends State<AttendanceTab> {
           children: [
             TextBold(
                 text: 'Attendance Sheet', fontSize: 18, color: Colors.white),
-            const SizedBox(
-              height: 10,
-            ),
-            TextRegular(text: 'Name:', fontSize: 14, color: Colors.white),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: SizedBox(
-                height: 40,
-                child: TextFormField(
-                  style: const TextStyle(
-                      color: Colors.black, fontFamily: 'Quicksand'),
-                  onChanged: (value) {
-                    name = value;
-                  },
-                  decoration: const InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 1, color: Colors.white),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 1, color: Colors.black),
-                    ),
-                  ),
-                ),
-              ),
-            ),
             const SizedBox(
               height: 10,
             ),
@@ -255,142 +235,6 @@ class _AttendanceTabState extends State<AttendanceTab> {
             const SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  width: 100,
-                  child: Column(
-                    children: [
-                      TextRegular(
-                          text: 'Month', fontSize: 14, color: Colors.white),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            height: 40,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 3, right: 3),
-                              child: DropdownButton(
-                                  underline:
-                                      Container(color: Colors.transparent),
-                                  isExpanded: true,
-                                  value: _value,
-                                  items: [
-                                    for (int i = 0; i < months.length; i++)
-                                      DropdownMenuItem(
-                                          onTap: () {
-                                            month = (i + 1).toString();
-                                          },
-                                          value: i,
-                                          child: TextRegular(
-                                              text: months[i],
-                                              fontSize: 12,
-                                              color: Colors.black))
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _value = int.parse(value.toString());
-                                    });
-                                  }),
-                            )),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 100,
-                  child: Column(
-                    children: [
-                      TextRegular(
-                          text: 'Day', fontSize: 14, color: Colors.white),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        child: SizedBox(
-                          height: 40,
-                          child: TextFormField(
-                            inputFormatters: <TextInputFormatter>[
-                              // for below version 2 use this
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9]')),
-// for version 2 and greater youcan also use this
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(
-                                color: Colors.black, fontFamily: 'Quicksand'),
-                            onChanged: (value) {
-                              day = value;
-                            },
-                            decoration: const InputDecoration(
-                              fillColor: Colors.white,
-                              filled: true,
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.white),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.black),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 100,
-                  child: Column(
-                    children: [
-                      TextRegular(
-                          text: 'Year', fontSize: 14, color: Colors.white),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            height: 40,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 3, right: 3),
-                              child: DropdownButton(
-                                  underline:
-                                      Container(color: Colors.transparent),
-                                  isExpanded: true,
-                                  value: _value1,
-                                  items: [
-                                    for (int i = 0; i < years.length; i++)
-                                      DropdownMenuItem(
-                                          onTap: () {
-                                            year = years[i];
-                                          },
-                                          value: i,
-                                          child: TextRegular(
-                                              text: years[i],
-                                              fontSize: 12,
-                                              color: Colors.black))
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _value1 = int.parse(value.toString());
-                                    });
-                                  }),
-                            )),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
             CheckboxListTile(
               tileColor: Colors.white,
               title: TextRegular(
@@ -452,11 +296,11 @@ class _AttendanceTabState extends State<AttendanceTab> {
                                       builder: (context) =>
                                           const HomeScreen()));
                               if (_timeIn == true) {
-                                addAttendance(name, nameOfEvent, 'Time In',
-                                    course, userId);
+                                addAttendance(myname, nameOfEvent, 'Time In',
+                                    course, box.read('id'));
                               } else {
-                                addAttendance(name, nameOfEvent, 'Time Out',
-                                    course, userId);
+                                addAttendance(myname, nameOfEvent, 'Time Out',
+                                    course, box.read('id'));
                               }
                             } else {
                               Fluttertoast.showToast(

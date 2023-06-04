@@ -389,6 +389,8 @@ class _LandingScreenState extends State<LandingScreen> {
                       await FirebaseAuth.instance.signInWithEmailAndPassword(
                           email: '$id@gmail.com', password: password);
 
+                      box.write('id', id);
+
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => const HomeScreen()));
                     } catch (e) {

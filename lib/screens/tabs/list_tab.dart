@@ -6,6 +6,8 @@ import 'package:get_storage/get_storage.dart';
 class ListTab extends StatelessWidget {
   final box = GetStorage();
 
+  ListTab({super.key});
+
   @override
   Widget build(BuildContext context) {
     print(box.read('password'));
@@ -23,7 +25,6 @@ class ListTab extends StatelessWidget {
             stream: FirebaseFirestore.instance
                 .collection('Attendance')
                 .where('id', isEqualTo: box.read('id'))
-                .where('password', isEqualTo: box.read('password'))
                 .orderBy('dateTime', descending: true)
                 .snapshots(),
             builder:

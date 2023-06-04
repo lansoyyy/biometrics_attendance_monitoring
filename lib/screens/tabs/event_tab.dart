@@ -16,6 +16,8 @@ class EventTab extends StatefulWidget {
 class _EventTabState extends State<EventTab> {
   DateTime _selectedDate = DateTime.now();
   String name = '';
+
+  bool _value = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,9 +129,31 @@ class _EventTabState extends State<EventTab> {
         backgroundColor: primary,
         title: TextRegular(text: 'Events', fontSize: 18, color: Colors.white),
         centerTitle: true,
+        actions: [
+          SizedBox(
+            height: 30,
+            width: 100,
+            child: SwitchListTile(
+              value: _value,
+              onChanged: (value) {
+                setState(() {
+                  _value = value;
+                  if (_value == true) {
+                  } else {}
+                });
+              },
+            ),
+          ),
+          const SizedBox(),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('Event').snapshots(),
+          stream: _value
+              ? FirebaseFirestore.instance.collection('Event').snapshots()
+              : FirebaseFirestore.instance
+                  .collection('Event')
+                  .where('status', isNotEqualTo: 'Archive')
+                  .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
@@ -165,18 +189,20 @@ class _EventTabState extends State<EventTab> {
                                 '${data.docs[index]['day']}/${data.docs[index]['month']}/${data.docs[index]['year']}',
                             fontSize: 12,
                             color: primary),
-                        trailing: IconButton(
-                          onPressed: () async {
-                            await FirebaseFirestore.instance
-                                .collection('Event')
-                                .doc(data.docs[index].id)
-                                .delete();
-                          },
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
-                          ),
-                        ),
+                        trailing: data.docs[index]['status'] != 'Archive'
+                            ? IconButton(
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('Event')
+                                      .doc(data.docs[index].id)
+                                      .update({'status': 'Archive'});
+                                },
+                                icon: const Icon(
+                                  Icons.archive_outlined,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : const SizedBox(),
                       ),
                     ),
                   );

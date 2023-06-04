@@ -53,6 +53,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   List types = [];
   List ids = [];
 
+  List datesAndTime = [];
+
   String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
 
   void _createPdf() async {
@@ -96,6 +98,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     pw.Text('Student ID No.'),
                     pw.Text('Student Name'),
                     pw.Text('Attendance Type'),
+                    pw.Text('Date and Time'),
                   ],
                 ),
                 for (int i = 0; i < ids.length; i++)
@@ -104,6 +107,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       pw.Text(ids[i]),
                       pw.Text(names[i]),
                       pw.Text(types[i]),
+                      pw.Text(datesAndTime[i]),
                     ],
                   ),
               ],
@@ -442,12 +446,20 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                       ids.clear();
                                                       names.clear();
                                                       types.clear();
+                                                      datesAndTime.clear();
                                                       ids.add(
                                                           data.docs[i]['id']);
                                                       names.add(
                                                           data.docs[i]['name']);
                                                       types.add(
                                                           data.docs[i]['type']);
+                                                      datesAndTime.add(
+                                                        DateFormat.yMMMd()
+                                                            .add_jm()
+                                                            .format(data.docs[i]
+                                                                    ['dateTime']
+                                                                .toDate()),
+                                                      );
                                                       return TextRegular(
                                                           text: data.docs[i]
                                                               ['name'],

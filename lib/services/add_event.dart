@@ -11,6 +11,7 @@ Future addEvent(name, DateTime date) async {
     'year': date.year,
     'dateTime': DateTime.now(),
     'id': docUser.id,
+    'status': 'Normal'
   };
 
   addNotif(name, date);

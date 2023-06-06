@@ -8,6 +8,8 @@ class ListTab extends StatelessWidget {
 
   ListTab({super.key});
 
+  final scroll = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     print(box.read('password'));
@@ -53,70 +55,76 @@ class ListTab extends StatelessWidget {
                   width: double.infinity,
                   color: Colors.white,
                   child: SingleChildScrollView(
-                    child: DataTable(
-                        border: TableBorder.all(
-                          color: Colors.grey,
-                        ),
-                        columns: [
-                          DataColumn(
-                              label: TextBold(
-                                  text: 'Student\nID NO.',
-                                  fontSize: 14,
-                                  color: Colors.black)),
-                          DataColumn(
-                              label: TextBold(
-                                  text: 'Name',
-                                  fontSize: 14,
-                                  color: Colors.black)),
-                          DataColumn(
-                              label: TextBold(
-                                  text: 'Attendace\nType',
-                                  fontSize: 14,
-                                  color: Colors.black)),
-                          DataColumn(
-                              label: TextBold(
-                                  text: 'Date',
-                                  fontSize: 14,
-                                  color: Colors.black)),
-                        ],
-                        rows: [
-                          for (int i = 0; i < data.docs.length; i++)
-                            DataRow(
-                                color:
-                                    MaterialStateProperty.resolveWith<Color?>(
-                                        (Set<MaterialState> states) {
-                                  if (i.floor().isEven) {
-                                    return Colors.blueGrey[50];
-                                  }
-                                  return null; // Use the default value.
-                                }),
-                                cells: [
-                                  DataCell(
-                                    TextRegular(
-                                        text: data.docs[i]['id'],
-                                        fontSize: 12,
-                                        color: Colors.black),
-                                  ),
-                                  DataCell(
-                                    TextRegular(
-                                        text: data.docs[i]['name'],
-                                        fontSize: 12,
-                                        color: Colors.black),
-                                  ),
-                                  DataCell(
-                                    TextRegular(
-                                        text: '${data.docs[i]['type']}',
-                                        fontSize: 12,
-                                        color: Colors.black),
-                                  ),
-                                  DataCell(
-                                    TextRegular(
-                                        text: data.docs[i]['date'],
-                                        fontSize: 12,
-                                        color: Colors.black),
-                                  )
-                                ]),
-                        ]),
+                    child: Scrollbar(
+                      controller: scroll,
+                      child: SingleChildScrollView(
+                        controller: scroll,
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                            border: TableBorder.all(
+                              color: Colors.grey,
+                            ),
+                            columns: [
+                              DataColumn(
+                                  label: TextBold(
+                                      text: 'Student\nID NO.',
+                                      fontSize: 14,
+                                      color: Colors.black)),
+                              DataColumn(
+                                  label: TextBold(
+                                      text: 'Name',
+                                      fontSize: 14,
+                                      color: Colors.black)),
+                              DataColumn(
+                                  label: TextBold(
+                                      text: 'Attendace\nType',
+                                      fontSize: 14,
+                                      color: Colors.black)),
+                              DataColumn(
+                                  label: TextBold(
+                                      text: 'Date',
+                                      fontSize: 14,
+                                      color: Colors.black)),
+                            ],
+                            rows: [
+                              for (int i = 0; i < data.docs.length; i++)
+                                DataRow(
+                                    color: MaterialStateProperty.resolveWith<
+                                        Color?>((Set<MaterialState> states) {
+                                      if (i.floor().isEven) {
+                                        return Colors.blueGrey[50];
+                                      }
+                                      return null; // Use the default value.
+                                    }),
+                                    cells: [
+                                      DataCell(
+                                        TextRegular(
+                                            text: data.docs[i]['id'],
+                                            fontSize: 12,
+                                            color: Colors.black),
+                                      ),
+                                      DataCell(
+                                        TextRegular(
+                                            text: data.docs[i]['name'],
+                                            fontSize: 12,
+                                            color: Colors.black),
+                                      ),
+                                      DataCell(
+                                        TextRegular(
+                                            text: '${data.docs[i]['type']}',
+                                            fontSize: 12,
+                                            color: Colors.black),
+                                      ),
+                                      DataCell(
+                                        TextRegular(
+                                            text: data.docs[i]['date'],
+                                            fontSize: 12,
+                                            color: Colors.black),
+                                      )
+                                    ]),
+                            ]),
+                      ),
+                    ),
                   ),
                 ),
               );

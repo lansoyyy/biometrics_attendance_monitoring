@@ -20,6 +20,7 @@ class _EventTabState extends State<EventTab> {
   bool _value = false;
 
   List<String> dropdownItems = [
+    'All Course',
     'BSIT',
     'BSIS',
     'BS IND TECH (ARCHITECTURAL DRAFTING)',
@@ -35,7 +36,7 @@ class _EventTabState extends State<EventTab> {
     'BSECE',
   ];
 
-  String selectedItem = 'BSIT';
+  String selectedItem = 'All Course';
   @override
   Widget build(BuildContext context) {
     print(_value);

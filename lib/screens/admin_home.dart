@@ -128,6 +128,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     /// save PDF with Flutter library "path_provider":
   }
 
+  final scroll = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -405,84 +407,110 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                   width: double.infinity,
                                   color: Colors.white,
                                   child: SingleChildScrollView(
-                                    child: DataTable(
-                                        border: TableBorder.all(
-                                          color: Colors.grey,
-                                        ),
-                                        columns: [
-                                          DataColumn(
-                                              label: TextBold(
-                                                  text: 'Name',
-                                                  fontSize: 14,
-                                                  color: Colors.black)),
-                                          DataColumn(
-                                              label: TextBold(
-                                                  text: 'Event',
-                                                  fontSize: 14,
-                                                  color: Colors.black)),
-                                          DataColumn(
-                                              label: TextBold(
-                                                  text: 'Date',
-                                                  fontSize: 14,
-                                                  color: Colors.black)),
-                                        ],
-                                        rows: [
-                                          for (int i = 0;
-                                              i < data.docs.length;
-                                              i++)
-                                            DataRow(
-                                                color: MaterialStateProperty
-                                                    .resolveWith<Color?>(
-                                                        (Set<MaterialState>
-                                                            states) {
-                                                  if (i.floor().isEven) {
-                                                    return Colors.blueGrey[100];
-                                                  }
-                                                  return null; // Use the default value.
-                                                }),
-                                                cells: [
-                                                  DataCell(
-                                                    Builder(builder: (context) {
-                                                      ids.clear();
-                                                      names.clear();
-                                                      types.clear();
-                                                      datesAndTime.clear();
-                                                      ids.add(
-                                                          data.docs[i]['id']);
-                                                      names.add(
-                                                          data.docs[i]['name']);
-                                                      types.add(
-                                                          data.docs[i]['type']);
-                                                      datesAndTime.add(
-                                                        DateFormat.yMMMd()
-                                                            .add_jm()
-                                                            .format(data.docs[i]
-                                                                    ['dateTime']
-                                                                .toDate()),
-                                                      );
-                                                      return TextRegular(
-                                                          text: data.docs[i]
-                                                              ['name'],
-                                                          fontSize: 12,
-                                                          color: Colors.black);
+                                    child: Scrollbar(
+                                      controller: scroll,
+                                      child: SingleChildScrollView(
+                                        controller: scroll,
+                                        scrollDirection: Axis.horizontal,
+                                        child: DataTable(
+                                            border: TableBorder.all(
+                                              color: Colors.grey,
+                                            ),
+                                            columns: [
+                                              DataColumn(
+                                                  label: TextBold(
+                                                      text: 'Student ID No.',
+                                                      fontSize: 14,
+                                                      color: Colors.black)),
+                                              DataColumn(
+                                                  label: TextBold(
+                                                      text: 'Name',
+                                                      fontSize: 14,
+                                                      color: Colors.black)),
+                                              DataColumn(
+                                                  label: TextBold(
+                                                      text: 'Attendance Type',
+                                                      fontSize: 14,
+                                                      color: Colors.black)),
+                                              DataColumn(
+                                                  label: TextBold(
+                                                      text: 'Date',
+                                                      fontSize: 14,
+                                                      color: Colors.black)),
+                                            ],
+                                            rows: [
+                                              for (int i = 0;
+                                                  i < data.docs.length;
+                                                  i++)
+                                                DataRow(
+                                                    color: MaterialStateProperty
+                                                        .resolveWith<Color?>(
+                                                            (Set<MaterialState>
+                                                                states) {
+                                                      if (i.floor().isEven) {
+                                                        return Colors
+                                                            .blueGrey[100];
+                                                      }
+                                                      return null; // Use the default value.
                                                     }),
-                                                  ),
-                                                  DataCell(
-                                                    TextRegular(
-                                                        text:
-                                                            '${data.docs[i]['nameOfEvent']} - ${data.docs[i]['type']}',
-                                                        fontSize: 12,
-                                                        color: Colors.black),
-                                                  ),
-                                                  DataCell(
-                                                    TextRegular(
-                                                        text: data.docs[i]
-                                                            ['date'],
-                                                        fontSize: 12,
-                                                        color: Colors.black),
-                                                  )
-                                                ]),
-                                        ]),
+                                                    cells: [
+                                                      DataCell(
+                                                        TextRegular(
+                                                            text:
+                                                                '${data.docs[i]['id']}',
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                      DataCell(
+                                                        Builder(
+                                                            builder: (context) {
+                                                          ids.clear();
+                                                          names.clear();
+                                                          types.clear();
+                                                          datesAndTime.clear();
+                                                          ids.add(data.docs[i]
+                                                              ['id']);
+                                                          names.add(data.docs[i]
+                                                              ['name']);
+                                                          types.add(data.docs[i]
+                                                              ['type']);
+                                                          datesAndTime.add(
+                                                            DateFormat.yMMMd()
+                                                                .add_jm()
+                                                                .format(data
+                                                                    .docs[i][
+                                                                        'dateTime']
+                                                                    .toDate()),
+                                                          );
+                                                          return TextRegular(
+                                                              text: data.docs[i]
+                                                                  ['name'],
+                                                              fontSize: 12,
+                                                              color:
+                                                                  Colors.black);
+                                                        }),
+                                                      ),
+                                                      DataCell(
+                                                        TextRegular(
+                                                            text:
+                                                                '${data.docs[i]['type']}',
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                      DataCell(
+                                                        TextRegular(
+                                                            text: data.docs[i]
+                                                                ['date'],
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black),
+                                                      )
+                                                    ]),
+                                            ]),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               );

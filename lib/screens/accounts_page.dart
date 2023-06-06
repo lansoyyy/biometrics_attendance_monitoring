@@ -101,35 +101,6 @@ class AccountsPage extends StatelessWidget {
                                           password: data.docs[index]
                                               ['password']);
 
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                            title: const Text(
-                                              "Student's Password",
-                                              style: TextStyle(
-                                                  fontFamily: 'QBold',
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            content: Text(
-                                              'Password is: ${data.docs[index]['name'] + data.docs[index]['studentId']} (Student name + Student Id)',
-                                              style: const TextStyle(
-                                                  fontFamily: 'QRegular'),
-                                            ),
-                                            actions: <Widget>[
-                                              MaterialButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context)
-                                                        .pop(true),
-                                                child: const Text(
-                                                  'Close',
-                                                  style: TextStyle(
-                                                      fontFamily: 'QRegular',
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                            ],
-                                          ));
                                   await FirebaseFirestore.instance
                                       .collection('Users')
                                       .doc(data.docs[index].id)

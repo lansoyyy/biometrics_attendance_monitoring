@@ -165,8 +165,8 @@ class _AttendanceTabState extends State<AttendanceTab> {
                     .where('day', isEqualTo: DateTime.now().day)
                     .where('month', isEqualTo: DateTime.now().month)
                     .where('year', isEqualTo: DateTime.now().year)
-                    .where('course', isEqualTo: course)
-                    .snapshots(),
+                    .where('course',
+                        whereIn: [course, 'All Course']).snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {

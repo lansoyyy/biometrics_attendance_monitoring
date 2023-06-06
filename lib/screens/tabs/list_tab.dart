@@ -60,12 +60,17 @@ class ListTab extends StatelessWidget {
                         columns: [
                           DataColumn(
                               label: TextBold(
+                                  text: 'Student\nID NO.',
+                                  fontSize: 14,
+                                  color: Colors.black)),
+                          DataColumn(
+                              label: TextBold(
                                   text: 'Name',
                                   fontSize: 14,
                                   color: Colors.black)),
                           DataColumn(
                               label: TextBold(
-                                  text: 'Event',
+                                  text: 'Attendace\nType',
                                   fontSize: 14,
                                   color: Colors.black)),
                           DataColumn(
@@ -88,14 +93,19 @@ class ListTab extends StatelessWidget {
                                 cells: [
                                   DataCell(
                                     TextRegular(
+                                        text: data.docs[i]['id'],
+                                        fontSize: 12,
+                                        color: Colors.black),
+                                  ),
+                                  DataCell(
+                                    TextRegular(
                                         text: data.docs[i]['name'],
                                         fontSize: 12,
                                         color: Colors.black),
                                   ),
                                   DataCell(
                                     TextRegular(
-                                        text:
-                                            '${data.docs[i]['nameOfEvent']} - ${data.docs[i]['type']}',
+                                        text: '${data.docs[i]['type']}',
                                         fontSize: 12,
                                         color: Colors.black),
                                   ),

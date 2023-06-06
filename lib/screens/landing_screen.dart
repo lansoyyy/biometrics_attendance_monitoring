@@ -55,11 +55,21 @@ class _LandingScreenState extends State<LandingScreen> {
 
   String selectedItem = 'BSIT';
 
+  List<String> dropdownYears = [
+    '1st Year',
+    '2nd Year',
+    '3rd Year',
+    '4th Year',
+  ];
+
   late String fileName = '';
 
   late File imageFile;
 
   late String imageURL = '';
+
+  String year = '1st Year';
+  String section = '';
 
   Future<void> uploadPicture(String inputSource) async {
     final picker = ImagePicker();
@@ -540,6 +550,55 @@ class _LandingScreenState extends State<LandingScreen> {
                     height: 20,
                   ),
                   Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: TextFormField(
+                      obscureText: true,
+                      onChanged: ((value) {
+                        newPassword = value;
+                      }),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          labelText: 'Enter Password',
+                          labelStyle: TextStyle(
+                              color: Colors.white, fontFamily: 'QRegular')),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: TextFormField(
+                      onChanged: ((value) {
+                        section = value;
+                      }),
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          labelText: 'Enter Section',
+                          labelStyle: TextStyle(
+                              color: Colors.white, fontFamily: 'QRegular')),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
                     padding: const EdgeInsets.only(left: 10, bottom: 10),
                     child: TextRegular(
                         text: 'Course:', fontSize: 14, color: Colors.white),
@@ -584,6 +643,53 @@ class _LandingScreenState extends State<LandingScreen> {
                     ),
                   ),
                   const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, bottom: 10),
+                    child: TextRegular(
+                        text: 'Year:', fontSize: 14, color: Colors.white),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: DropdownButton<String>(
+                        underline: const SizedBox(),
+                        value: year,
+                        items: dropdownYears.map((String item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Center(
+                              child: SizedBox(
+                                width: 225,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'QRegular',
+                                        fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            year = newValue.toString();
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
                     height: 40,
                   ),
                   Center(
@@ -602,7 +708,8 @@ class _LandingScreenState extends State<LandingScreen> {
                           //         password: name + newId);
 
                           if (imageURL != '') {
-                            addUser(newId, name, selectedItem, imageURL);
+                            addUser(newId, name, selectedItem, imageURL,
+                                newPassword, year, section);
 
                             Fluttertoast.showToast(
                                 msg:

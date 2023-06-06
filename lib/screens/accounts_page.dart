@@ -98,8 +98,8 @@ class AccountsPage extends StatelessWidget {
                                       .createUserWithEmailAndPassword(
                                           email:
                                               '${data.docs[index]['studentId']}@gmail.com',
-                                          password: data.docs[index]['name'] +
-                                              data.docs[index]['studentId']);
+                                          password: data.docs[index]
+                                              ['password']);
 
                                   showDialog(
                                       context: context,

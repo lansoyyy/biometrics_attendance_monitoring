@@ -71,6 +71,8 @@ class _AttendanceTabState extends State<AttendanceTab> {
   String course = '';
   String userId = '';
   String myname = '';
+  String mySection = '';
+  String myYear = '';
 
   final box = GetStorage();
 
@@ -88,6 +90,8 @@ class _AttendanceTabState extends State<AttendanceTab> {
           course = doc['course'];
           userId = doc['studentId'];
           myname = doc['name'];
+          mySection = doc['section'];
+          myYear = doc['year'];
         });
       }
     });
@@ -299,10 +303,10 @@ class _AttendanceTabState extends State<AttendanceTab> {
                                           const HomeScreen()));
                               if (_timeIn == true) {
                                 addAttendance(myname, nameOfEvent, 'Time In',
-                                    course, box.read('id'));
+                                    course, box.read('id'), mySection, myYear);
                               } else {
                                 addAttendance(myname, nameOfEvent, 'Time Out',
-                                    course, box.read('id'));
+                                    course, box.read('id'), mySection, myYear);
                               }
                             } else {
                               Fluttertoast.showToast(

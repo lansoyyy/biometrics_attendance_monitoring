@@ -53,7 +53,7 @@ class _LandingScreenState extends State<LandingScreen> {
     'BSECE',
   ];
 
-  String selectedItem = 'BSIT';
+  String selectedCOurse = 'BSIT';
 
   List<String> dropdownYears = [
     '1st Year',
@@ -61,6 +61,7 @@ class _LandingScreenState extends State<LandingScreen> {
     '3rd Year',
     '4th Year',
   ];
+  String selectedYear = '1st Year';
 
   late String fileName = '';
 
@@ -68,7 +69,6 @@ class _LandingScreenState extends State<LandingScreen> {
 
   late String imageURL = '';
 
-  String year = '1st Year';
   String section = '';
 
   Future<void> uploadPicture(String inputSource) async {
@@ -613,7 +613,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           borderRadius: BorderRadius.circular(5)),
                       child: DropdownButton<String>(
                         underline: const SizedBox(),
-                        value: selectedItem,
+                        value: selectedCOurse,
                         items: dropdownItems.map((String item) {
                           return DropdownMenuItem<String>(
                             value: item,
@@ -636,7 +636,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         }).toList(),
                         onChanged: (newValue) {
                           setState(() {
-                            selectedItem = newValue.toString();
+                            selectedCOurse = newValue.toString();
                           });
                         },
                       ),
@@ -660,7 +660,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           borderRadius: BorderRadius.circular(5)),
                       child: DropdownButton<String>(
                         underline: const SizedBox(),
-                        value: year,
+                        value: selectedYear,
                         items: dropdownYears.map((String item) {
                           return DropdownMenuItem<String>(
                             value: item,
@@ -683,7 +683,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         }).toList(),
                         onChanged: (newValue) {
                           setState(() {
-                            year = newValue.toString();
+                            selectedYear = newValue.toString();
                           });
                         },
                       ),
@@ -708,8 +708,8 @@ class _LandingScreenState extends State<LandingScreen> {
                           //         password: name + newId);
 
                           if (imageURL != '') {
-                            addUser(newId, name, selectedItem, imageURL,
-                                newPassword, year, section);
+                            addUser(newId, name, selectedCOurse, imageURL,
+                                newPassword, selectedYear, section);
 
                             Fluttertoast.showToast(
                                 msg:

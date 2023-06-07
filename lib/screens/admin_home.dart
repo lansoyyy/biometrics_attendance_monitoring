@@ -11,6 +11,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
+import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -45,17 +46,32 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     'BSCPE',
     'BSECE',
   ];
-  String selectedItem = 'BSIT';
+  String selectedCourse = 'BSIT';
 
   final doc = pw.Document();
 
   List names = [];
   List types = [];
   List ids = [];
+  List courses = [];
+  List sections = [];
 
   List datesAndTime = [];
 
   String cdate2 = DateFormat("MMMM, dd, yyyy").format(DateTime.now());
+  final searchController = TextEditingController();
+
+  List<String> dropdownYears = [
+    '1st Year',
+    '2nd Year',
+    '3rd Year',
+    '4th Year',
+  ];
+  String selectedYear = '1st Year';
+  String nameOfEvent = '';
+
+  int dropValue = 0;
+  String nameSearched = '';
 
   void _createPdf() async {
     /// for using an image from assets
@@ -87,7 +103,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             pw.SizedBox(height: 20),
             pw.Text(cdate2),
             pw.SizedBox(height: 10),
-            pw.Text('Attendance List - $selectedItem'),
+            pw.Text('Attendance List - $selectedCourse'),
             pw.SizedBox(height: 20),
             pw.Table(
               border: pw.TableBorder.all(),
@@ -97,6 +113,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   children: [
                     pw.Text('Student ID No.'),
                     pw.Text('Student Name'),
+                    pw.Text('Course'),
+                    pw.Text('Section'),
                     pw.Text('Attendance Type'),
                     pw.Text('Date and Time'),
                   ],
@@ -106,6 +124,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     children: [
                       pw.Text(ids[i]),
                       pw.Text(names[i]),
+                      pw.Text(courses[i]),
+                      pw.Text(sections[i]),
                       pw.Text(types[i]),
                       pw.Text(datesAndTime[i]),
                     ],
@@ -328,57 +348,251 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
-                                ),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 30, right: 30),
-                              child: DropdownButton<String>(
-                                underline: const SizedBox(),
-                                value: selectedItem,
-                                items: dropdownItems.map((String item) {
-                                  return DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Center(
-                                      child: SizedBox(
-                                        width: 225,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontFamily: 'QBold',
-                                                fontSize: 14),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (newValue) {
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          child: Center(
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextFormField(
+                                onChanged: (value) {
                                   setState(() {
-                                    selectedItem = newValue.toString();
+                                    nameSearched = value;
                                   });
                                 },
+                                decoration: const InputDecoration(
+                                    hintText: 'Search',
+                                    hintStyle: TextStyle(
+                                        fontFamily: 'QRegular',
+                                        color: Colors.white),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      color: Colors.white,
+                                    )),
+                                controller: searchController,
                               ),
                             ),
                           ),
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 210,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.white,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 10),
+                                        child: DropdownButton<String>(
+                                          underline: const SizedBox(),
+                                          value: selectedCourse,
+                                          items:
+                                              dropdownItems.map((String item) {
+                                            return DropdownMenuItem<String>(
+                                              value: item,
+                                              child: Center(
+                                                child: SizedBox(
+                                                  width: 144,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    child: Text(
+                                                      item,
+                                                      style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily:
+                                                              'QRegular',
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                          onChanged: (newValue) {
+                                            setState(() {
+                                              selectedCourse =
+                                                  newValue.toString();
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: 182,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.white,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: DropdownButton<String>(
+                                        underline: const SizedBox(),
+                                        value: selectedYear,
+                                        items: dropdownYears.map((String item) {
+                                          return DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 120,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    item,
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily: 'QRegular',
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            selectedYear = newValue.toString();
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          child: TextRegular(
+                              text: 'Event:',
+                              fontSize: 14,
+                              color: Colors.white),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                          child: StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('Event')
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasError) {
+                                  print('error');
+                                  return const Center(child: Text('Error'));
+                                }
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  print('waiting');
+                                  return const Padding(
+                                    padding: EdgeInsets.only(top: 50),
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                      color: Colors.black,
+                                    )),
+                                  );
+                                }
+
+                                final data = snapshot.requireData;
+
+                                return Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.white,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 30, right: 30),
+                                    child: DropdownButton(
+                                      iconEnabledColor: Colors.white,
+                                      iconDisabledColor: Colors.white,
+                                      dropdownColor: primary,
+                                      underline: const SizedBox(),
+                                      value: dropValue,
+                                      items: [
+                                        for (int i = 0;
+                                            i < data.docs.length;
+                                            i++)
+                                          DropdownMenuItem(
+                                            onTap: () {
+                                              nameOfEvent =
+                                                  data.docs[i]['name'];
+                                            },
+                                            value: i,
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 225,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    data.docs[i]['name'],
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontFamily: 'QBold',
+                                                        fontSize: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                      ],
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          dropValue =
+                                              int.parse(newValue.toString());
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }),
+                        ),
                         StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection('Attendance')
-                                .where('course', isEqualTo: selectedItem)
+                                .where('course', isEqualTo: selectedCourse)
+                                .where('year', isEqualTo: selectedYear)
+                                .where('nameOfEvent', isEqualTo: nameOfEvent)
+                                .where('name',
+                                    isGreaterThanOrEqualTo:
+                                        toBeginningOfSentenceCase(nameSearched))
+                                .where('name',
+                                    isLessThan:
+                                        '${toBeginningOfSentenceCase(nameSearched)}z')
                                 .snapshots(),
                             builder: (BuildContext context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -429,6 +643,16 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                       color: Colors.black)),
                                               DataColumn(
                                                   label: TextBold(
+                                                      text: 'Course',
+                                                      fontSize: 14,
+                                                      color: Colors.black)),
+                                              DataColumn(
+                                                  label: TextBold(
+                                                      text: 'Section',
+                                                      fontSize: 14,
+                                                      color: Colors.black)),
+                                              DataColumn(
+                                                  label: TextBold(
                                                       text: 'Attendance Type',
                                                       fontSize: 14,
                                                       color: Colors.black)),
@@ -469,12 +693,20 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                           names.clear();
                                                           types.clear();
                                                           datesAndTime.clear();
+                                                          courses.clear();
+                                                          sections.clear();
                                                           ids.add(data.docs[i]
                                                               ['id']);
                                                           names.add(data.docs[i]
                                                               ['name']);
                                                           types.add(data.docs[i]
                                                               ['type']);
+                                                          courses.add(
+                                                              data.docs[i]
+                                                                  ['course']);
+                                                          sections.add(
+                                                              data.docs[i]
+                                                                  ['section']);
                                                           datesAndTime.add(
                                                             DateFormat.yMMMd()
                                                                 .add_jm()
@@ -490,6 +722,22 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                                               color:
                                                                   Colors.black);
                                                         }),
+                                                      ),
+                                                      DataCell(
+                                                        TextRegular(
+                                                            text:
+                                                                '${data.docs[i]['course']}',
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                      DataCell(
+                                                        TextRegular(
+                                                            text:
+                                                                '${data.docs[i]['section']}',
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black),
                                                       ),
                                                       DataCell(
                                                         TextRegular(

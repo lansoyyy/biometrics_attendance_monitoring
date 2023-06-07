@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future addAttendance(
-    String name, String nameOfEvent, String type, course, userId) async {
+Future addAttendance(String name, String nameOfEvent, String type, course,
+    userId, section, year) async {
   final docUser = FirebaseFirestore.instance.collection('Attendance').doc();
 
   final json = {
@@ -13,6 +13,8 @@ Future addAttendance(
     'dateTime': DateTime.now(),
     'course': course,
     'id': userId,
+    'section': section,
+    'year': year
   };
 
   await docUser.set(json);
